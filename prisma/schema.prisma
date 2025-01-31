@@ -1,0 +1,68 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Note that some adapters may set a maximum length for the String type by default, please ensure your strings are long
+// enough when changing adapters.
+// See https://www.prisma.io/docs/orm/reference/prisma-schema-reference#string for more information
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Session {
+  id            String    @id
+  shop          String
+  state         String
+  isOnline      Boolean   @default(false)
+  scope         String?
+  expires       DateTime?
+  accessToken   String
+  userId        BigInt?
+  firstName     String?
+  lastName      String?
+  email         String?
+  accountOwner  Boolean   @default(false)
+  locale        String?
+  collaborator  Boolean?  @default(false)
+  emailVerified Boolean?  @default(false)
+}
+
+
+model Automation {
+  id           String    @id @default(uuid()) // Unique automation ID
+  storeId      String    // Shopify Store ID
+  event        String    // Trigger event (abandoned_cart, order_confirmation, etc.)
+  message      String    // SMS content
+  status       Boolean   @default(true) // Enable/disable automation
+  delayMinutes Int?      // Delay before sending SMS
+  createdAt    DateTime  @default(now()) // Timestamp when the automation was created
+
+  recipients   AutomationRecipient[] // Many-to-many relationship
+}
+
+model Customer {
+  id           String    @id // Shopify Customer ID
+  storeId      String    // Shopify Store ID (ensures customers are linked to the right merchant)
+  firstName    String?
+  lastName     String?
+  email        String?
+  phoneNumber  String?
+  createdAt    DateTime  @default(now()) // When the customer was added
+
+  automations  AutomationRecipient[] // Many-to-many relationship
+}
+
+// Join table for many-to-many relationship
+model AutomationRecipient {
+  id           String    @id @default(uuid()) // Unique recipient ID
+  automationId String    // Links to an automation
+  customerId   String    // Links to a customer
+  createdAt    DateTime  @default(now()) // When they were added
+
+  automation   Automation @relation(fields: [automationId], references: [id], onDelete: Cascade)
+  customer     Customer   @relation(fields: [customerId], references: [id], onDelete: Cascade)
+}
