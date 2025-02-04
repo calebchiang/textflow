@@ -11,9 +11,12 @@ import {
   FormLayout,
   TextField,
   Select,
+  Checkbox,
 } from "@shopify/polaris";
 import { TitleBar } from "@shopify/app-bridge-react";
 import { authenticate } from "../shopify.server";
+import { UI_STRINGS } from "../constants/ui";
+import { EVENT_DESCRIPTIONS, EVENT_TEMPLATES } from "../constants/events";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   await authenticate.admin(request);
@@ -23,29 +26,46 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 export default function Dashboard() {
   const [modalActive, setModalActive] = useState(false);
   const [event, setEvent] = useState("abandoned_cart");
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState(EVENT_TEMPLATES["abandoned_cart"]);
+  const [status, setStatus] = useState(true);
+  const [delayMinutes, setDelayMinutes] = useState(0);
+  const [recipients, setRecipients] = useState([]);
 
-  const handleModalChange = useCallback(() => setModalActive(!modalActive), [modalActive]);
+  const handleModalChange = useCallback(
+    () => setModalActive(!modalActive),
+    [modalActive]
+  );
 
   const handleSubmit = useCallback(() => {
-    alert(`Automation Created!\nEvent: ${event}\nMessage: ${message}`);
+    alert(
+      `Automation Created!\nEvent: ${event}\nMessage: ${message}\nStatus: ${status}\nDelay: ${delayMinutes} minutes\nRecipients: ${recipients.length} selected`
+    );
     setModalActive(false);
-  }, [event, message]);
+  }, [event, message, status, delayMinutes, recipients]);
 
   return (
     <Page>
-      <TitleBar title="TextFlow - SMS Automations" />
       <Layout>
         <Layout.Section>
-          <Card title="Your Automations" sectioned>
-            <TextContainer>
-              <Text as="p">
-                Set up SMS automations to engage customers with abandoned cart recovery, promotions, and reviews.
-              </Text>
-              <Button primary onClick={handleModalChange}>
-                Create New Automation
-              </Button>
-            </TextContainer>
+          <Card sectioned>
+            <div style={{ textAlign: "center", padding: "70px 0", minHeight: "500px" }}>
+              <img 
+                src="/sms-icon.png" 
+                alt="SMS Automation" 
+                style={{ width: "120px", height: "120px", display: "block", margin: "0 auto", marginBottom: "30px" }} 
+              />
+              <TextContainer>
+                <Text as="h2" variant="headingLg" style={{ marginTop: "30px" }}>
+                  {UI_STRINGS.HEADING}
+                </Text>
+                <Text as="p" variant="bodyMd" style={{ marginBottom: "20px" }}>
+                  {UI_STRINGS.SUBHEADING}
+                </Text>
+                <Button primary onClick={handleModalChange}>
+                  {UI_STRINGS.BUTTON_CREATE}
+                </Button>
+              </TextContainer>
+            </div>
           </Card>
         </Layout.Section>
       </Layout>
@@ -54,37 +74,46 @@ export default function Dashboard() {
       <Modal
         open={modalActive}
         onClose={handleModalChange}
-        title="Create New SMS Automation"
-        primaryAction={{
-          content: "Save Automation",
-          onAction: handleSubmit,
-        }}
-        secondaryActions={[
-          {
-            content: "Cancel",
-            onAction: handleModalChange,
-          },
-        ]}
+        title={UI_STRINGS.MODAL_TITLE}
+        primaryAction={{ content: UI_STRINGS.SAVE_AUTOMATION, onAction: handleSubmit }}
+        secondaryActions={[{ content: UI_STRINGS.CANCEL, onAction: handleModalChange }]}
       >
         <Modal.Section>
           <FormLayout>
             <Select
-              label="Select Event"
-              options={[
-                { label: "Abandoned Cart", value: "abandoned_cart" },
-                { label: "Order Confirmation", value: "order_confirmation" },
-                { label: "Review Request", value: "review_request" },
-              ]}
+              label={UI_STRINGS.SELECT_EVENT}
+              options={Object.keys(EVENT_DESCRIPTIONS).map(key => ({ label: key.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase()), value: key }))}
               value={event}
-              onChange={setEvent}
+              onChange={(value) => {
+                setEvent(value);
+                setMessage(EVENT_TEMPLATES[value]);
+              }}
             />
+            <p style={{ fontStyle: "italic", color: "#0057D9", fontWeight: "bold" }}>
+              {EVENT_DESCRIPTIONS[event]}
+            </p>
+
             <TextField
-              label="SMS Message"
+              label={UI_STRINGS.SMS_MESSAGE}
               value={message}
               onChange={setMessage}
-              multiline={3}
-              placeholder="Type your SMS message here..."
+              multiline={4}
+              placeholder={EVENT_TEMPLATES[event]}
             />
+            <Checkbox
+              label={UI_STRINGS.ENABLE_AUTOMATION}
+              checked={status}
+              onChange={() => setStatus(!status)}
+            />
+            <TextField
+              label={UI_STRINGS.DELAY_MINUTES}
+              type="number"
+              value={delayMinutes.toString()}
+              onChange={(value) => setDelayMinutes(parseInt(value) || 0)}
+              min={0}
+            />
+            {/* Placeholder for Recipients Selection */}
+            <Text>{UI_STRINGS.SELECT_RECIPIENTS}</Text>
           </FormLayout>
         </Modal.Section>
       </Modal>
