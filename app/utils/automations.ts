@@ -62,3 +62,27 @@ export async function createAutomation({
     throw new Error("Failed to create automation");
   }
 }
+
+/**
+ * Retrieves all automations for a given store ID.
+ */
+export async function getAutomationsForStore(storeId: string) {
+  try {
+    const automations = await prisma.automation.findMany({
+      where: { storeId },
+      include: {
+        recipients: {
+          include: {
+            customer: true, // Fetch customer details for each recipient
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" }, // Sort by most recent automations
+    });
+
+    return automations;
+  } catch (error) {
+    console.error("Error fetching automations:", error);
+    throw new Error("Failed to retrieve automations");
+  }
+}

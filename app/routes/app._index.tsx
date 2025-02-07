@@ -1,11 +1,11 @@
 import { useState, useCallback } from "react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { useFetcher } from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react"; // ✅ Import useLoaderData
 import { Page, Layout } from "@shopify/polaris";
 import { authenticate } from "../shopify.server";
 import { EVENT_TEMPLATES } from "../constants/events";
-import { createAutomation } from "../utils/automations"; 
+import { createAutomation, getAutomationsForStore } from "../utils/automations";
 import DashboardCard from "../components/DashboardCard";
 import AutomationModal from "../components/AutomationModal";
 
@@ -13,8 +13,16 @@ import AutomationModal from "../components/AutomationModal";
  * authenticates shopify admin user before rendering the page
  */
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  await authenticate.admin(request);
-  return null;
+  const { session } = await authenticate.admin(request);
+  const storeId = session.shop;
+
+  console.log("Fetching automations for store:", storeId); // Debug log
+
+  const automations = await getAutomationsForStore(storeId);
+
+  console.log("Fetched automations:", automations); // Debug log
+
+  return json({ automations }); // ✅ Pass data to frontend
 };
 
 /**
@@ -56,6 +64,10 @@ export const action = async ({ request }) => {
  * main UI component
  */
 export default function Dashboard() {
+  const automations = useLoaderData<typeof loader>().automations; // ✅ Fetch automation data
+
+  console.log("Incoming automations in Dashboard:", automations); // Debug log
+
   const [modalActive, setModalActive] = useState(false);
   const [event, setEvent] = useState("abandoned_cart");
   const [message, setMessage] = useState(EVENT_TEMPLATES["abandoned_cart"]);
@@ -69,7 +81,7 @@ export default function Dashboard() {
     <Page>
       <Layout>
         <Layout.Section>
-          <DashboardCard onOpenModal={handleModalChange} />
+          <DashboardCard onOpenModal={handleModalChange} automations={automations} /> {/* ✅ Pass data */}
         </Layout.Section>
       </Layout>
 
