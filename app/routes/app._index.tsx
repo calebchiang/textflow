@@ -1,5 +1,7 @@
 import { useState, useCallback } from "react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
+import { json } from "@remix-run/node";
+import { useFetcher } from "@remix-run/react";
 import {
   Page,
   Layout,
@@ -13,16 +15,63 @@ import {
   Select,
   Checkbox,
 } from "@shopify/polaris";
-import { TitleBar } from "@shopify/app-bridge-react";
 import { authenticate } from "../shopify.server";
 import { UI_STRINGS } from "../constants/ui";
 import { EVENT_DESCRIPTIONS, EVENT_TEMPLATES } from "../constants/events";
+import { createAutomation } from "../utils/automations"; 
 
+/**
+ * authenticates shopify admin user before rendering the page
+ */
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   await authenticate.admin(request);
   return null;
 };
 
+/**
+ * Receives form submisson data from frontend, calls createAutomation() util function
+ */
+export const action = async ({ request }) => {
+  try {
+    const { admin, session } = await authenticate.admin(request);
+    console.log("Session Data:", session);
+
+    // extract shopify store id
+    const storeId = session.shop;
+    console.log(storeId);
+
+    const formData = await request.formData();
+    
+    const event = formData.get("event")?.toString();
+    const message = formData.get("message")?.toString();
+    const status = formData.get("status") === "true";
+    const delayMinutes = formData.get("delayMinutes") ? Number(formData.get("delayMinutes")) : 0;
+    const recipients = JSON.parse(formData.get("recipients") || "[]");
+
+    if (!storeId || !event || !message) {
+      return json({ success: false, error: "Missing required fields" }, { status: 400 });
+    }
+
+    // save to db using util function
+    const automation = await createAutomation({
+      storeId,
+      event,
+      message,
+      status,
+      delayMinutes,
+      recipients,
+    });
+
+    return json({ success: true, automation });
+  } catch (error) {
+    console.error("Failed to save automation:", error);
+    return json({ success: false, error: "Internal Server Error" }, { status: 500 });
+  }
+};
+
+/**
+ * main UI component
+ */
 export default function Dashboard() {
   const [modalActive, setModalActive] = useState(false);
   const [event, setEvent] = useState("abandoned_cart");
@@ -31,17 +80,12 @@ export default function Dashboard() {
   const [delayMinutes, setDelayMinutes] = useState(0);
   const [recipients, setRecipients] = useState([]);
 
-  const handleModalChange = useCallback(
-    () => setModalActive(!modalActive),
-    [modalActive]
-  );
+  const fetcher = useFetcher();
+  const isSubmitting = fetcher.state === "submitting";
 
-  const handleSubmit = useCallback(() => {
-    alert(
-      `Automation Created!\nEvent: ${event}\nMessage: ${message}\nStatus: ${status}\nDelay: ${delayMinutes} minutes\nRecipients: ${recipients.length} selected`
-    );
-    setModalActive(false);
-  }, [event, message, status, delayMinutes, recipients]);
+  const handleModalChange = useCallback(() => {
+    setModalActive(!modalActive);
+  }, [modalActive]);
 
   return (
     <Page>
@@ -49,10 +93,10 @@ export default function Dashboard() {
         <Layout.Section>
           <Card sectioned>
             <div style={{ textAlign: "center", padding: "70px 0", minHeight: "500px" }}>
-              <img 
-                src="/sms-icon.png" 
-                alt="SMS Automation" 
-                style={{ width: "120px", height: "120px", display: "block", margin: "0 auto", marginBottom: "30px" }} 
+              <img
+                src="/sms-icon.png"
+                alt="SMS Automation"
+                style={{ width: "120px", height: "120px", display: "block", margin: "0 auto", marginBottom: "30px" }}
               />
               <TextContainer>
                 <Text as="h2" variant="headingLg" style={{ marginTop: "30px" }}>
@@ -75,21 +119,38 @@ export default function Dashboard() {
         open={modalActive}
         onClose={handleModalChange}
         title={UI_STRINGS.MODAL_TITLE}
-        primaryAction={{ content: UI_STRINGS.SAVE_AUTOMATION, onAction: handleSubmit }}
+        primaryAction={{
+          content: isSubmitting ? "Saving..." : UI_STRINGS.SAVE_AUTOMATION,
+          onAction: () => fetcher.submit(
+            {
+              storeId: "SHOP_ID", // Replace with actual store ID
+              event,
+              message,
+              status: status.toString(),
+              delayMinutes: delayMinutes.toString(),
+              recipients, // Ensure recipients are properly formatted
+            },
+            { method: "post" }
+          ),
+          disabled: isSubmitting,
+        }}
         secondaryActions={[{ content: UI_STRINGS.CANCEL, onAction: handleModalChange }]}
       >
         <Modal.Section>
           <FormLayout>
             <Select
               label={UI_STRINGS.SELECT_EVENT}
-              options={Object.keys(EVENT_DESCRIPTIONS).map(key => ({ label: key.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase()), value: key }))}
+              options={Object.keys(EVENT_DESCRIPTIONS).map((key) => ({
+                label: key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
+                value: key,
+              }))}
               value={event}
               onChange={(value) => {
                 setEvent(value);
                 setMessage(EVENT_TEMPLATES[value]);
               }}
             />
-            <p style={{ fontStyle: "italic", color: "#0057D9", fontWeight: "bold" }}>
+            <p style={{ color: "#0057D9", fontWeight: "bold" }}>
               {EVENT_DESCRIPTIONS[event]}
             </p>
 
@@ -112,8 +173,17 @@ export default function Dashboard() {
               onChange={(value) => setDelayMinutes(parseInt(value) || 0)}
               min={0}
             />
-            {/* Placeholder for Recipients Selection */}
-            <Text>{UI_STRINGS.SELECT_RECIPIENTS}</Text>
+            {/* Display success or error message */}
+            {fetcher.data?.success && (
+              <p style={{ color: "green", fontWeight: "bold", marginTop: "10px" }}>
+                ✅ Automation saved successfully!
+              </p>
+            )}
+            {fetcher.data?.error && (
+              <p style={{ color: "red", fontWeight: "bold", marginTop: "10px" }}>
+                ❌ {fetcher.data.error}
+              </p>
+            )}
           </FormLayout>
         </Modal.Section>
       </Modal>
