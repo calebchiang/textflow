@@ -19,8 +19,6 @@ export async function createAutomation({
   recipients: string[];
 }) {
   try {
-    console.log("Received recipients:", recipients);
-
     // Check if all recipients exist
     const existingCustomers = await prisma.customer.findMany({
       where: { id: { in: recipients } },

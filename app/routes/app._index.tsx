@@ -1,13 +1,14 @@
 import { useState, useCallback } from "react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react"; // ✅ Import useLoaderData
+import { useLoaderData } from "@remix-run/react";
 import { Page, Layout } from "@shopify/polaris";
 import { authenticate } from "../shopify.server";
 import { EVENT_TEMPLATES } from "../constants/events";
 import { createAutomation, getAutomationsForStore } from "../utils/automations";
 import DashboardCard from "../components/DashboardCard";
 import AutomationModal from "../components/AutomationModal";
+import EventSelectionModal from "../components/EventSelectionModal";
 
 /**
  * authenticates shopify admin user before rendering the page
@@ -15,14 +16,9 @@ import AutomationModal from "../components/AutomationModal";
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { session } = await authenticate.admin(request);
   const storeId = session.shop;
-
-  console.log("Fetching automations for store:", storeId); // Debug log
-
   const automations = await getAutomationsForStore(storeId);
 
-  console.log("Fetched automations:", automations); // Debug log
-
-  return json({ automations }); // ✅ Pass data to frontend
+  return json({ automations });
 };
 
 /**
@@ -64,31 +60,46 @@ export const action = async ({ request }) => {
  * main UI component
  */
 export default function Dashboard() {
-  const automations = useLoaderData<typeof loader>().automations; // ✅ Fetch automation data
-
-  console.log("Incoming automations in Dashboard:", automations); // Debug log
-
-  const [modalActive, setModalActive] = useState(false);
-  const [event, setEvent] = useState("abandoned_cart");
-  const [message, setMessage] = useState(EVENT_TEMPLATES["abandoned_cart"]);
+  const automations = useLoaderData<typeof loader>().automations;
+  const [eventSelectionModalActive, setEventSelectionModalActive] = useState(false);
+  const [automationModalActive, setAutomationModalActive] = useState(false);
+  const [event, setEvent] = useState<string | null>(null);
+  const [message, setMessage] = useState("");
   const [status, setStatus] = useState(true);
   const [delayMinutes, setDelayMinutes] = useState(0);
   const [recipients, setRecipients] = useState([]);
 
-  const handleModalChange = useCallback(() => setModalActive(!modalActive), [modalActive]);
+  const handleOpenEventSelectionModal = () => setEventSelectionModalActive(true);
+  const handleCloseEventSelectionModal = () => setEventSelectionModalActive(false);
+
+  const handleOpenAutomationModal = (selectedEvent: string) => {
+    setEvent(selectedEvent);
+    setMessage(EVENT_TEMPLATES[selectedEvent] || "");
+    setEventSelectionModalActive(false);
+    setAutomationModalActive(true);
+  };
+
+  const handleCloseAutomationModal = () => setAutomationModalActive(false);
 
   return (
     <Page>
       <Layout>
         <Layout.Section>
-          <DashboardCard onOpenModal={handleModalChange} automations={automations} /> {/* ✅ Pass data */}
+        <DashboardCard onOpenModal={handleOpenEventSelectionModal} automations={automations} />
+
         </Layout.Section>
       </Layout>
 
+      <EventSelectionModal
+        modalActive={eventSelectionModalActive}
+        handleClose={handleCloseEventSelectionModal}
+        handleContinue={handleOpenAutomationModal}
+      />
+
       <AutomationModal
-        modalActive={modalActive}
-        handleModalChange={handleModalChange}
-        event={event}
+        modalActive={automationModalActive}
+        handleModalChange={handleCloseAutomationModal}
+        event={event ?? ""}
         setEvent={setEvent}
         message={message}
         setMessage={setMessage}
