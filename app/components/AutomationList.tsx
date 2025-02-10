@@ -1,21 +1,59 @@
-import { Card, Text, Button } from "@shopify/polaris";
+import { Box, Text, Button } from "@shopify/polaris";
 import Automation from "./Automation";
 
 export default function AutomationList({ automations, onOpenModal }: { automations: any[], onOpenModal: () => void }) {
   return (
-    <Card sectioned>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
-        <Text as="h2" variant="headingLg">Automations</Text>
-        <Button primary onClick={onOpenModal}>
-          ➕
-        </Button>
+    <div style={{ borderRadius: "5px", overflow: "hidden"}}>
+    <Box background="bg-surface">
+      <div 
+        style={{
+          display: "flex", 
+          justifyContent: "space-between", 
+          alignItems: "center", 
+          padding: "16px 20px",
+          backgroundColor: "#FFFFFF" ,
+          minHeight: "100px",
+        }}
+      >
+        <Text as="h1" variant="headingXl">Automations</Text>
+        <Button onClick={onOpenModal}> ➕ </Button>
       </div>
 
-      {automations.length > 0 ? (
-        automations.map((automation) => <Automation key={automation.id} automation={automation} />)
-      ) : (
-        <Text>No automations created yet. Click the button to create one!</Text>
+      {/* Column Headers (Darker Background) */}
+      {automations.length > 0 && (
+        <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 0.2fr 0.2fr 0.2fr",
+          alignItems: "center",
+          fontWeight: "bold",
+          backgroundColor: "#F9FAFB",
+          minHeight: "60px",
+          width: "100%",
+          padding: "0px 20px", 
+        }}
+        >
+          <Text as="p" variant="bodyMd" tone="subdued">Name</Text>
+          <Text as="p" variant="bodyMd" tone="subdued">Delay</Text>
+          <Text as="p" variant="bodyMd" tone="subdued">Status</Text>
+          <Text as="p" variant="bodyMd" tone="subdued">Actions</Text>
+        </div>
       )}
-    </Card>
+
+      {/* Automation Rows (White Background) */}
+      {automations.length > 0 ? (
+        automations.map((automation, index) => (
+          <div 
+            key={automation.id} 
+            style={{ backgroundColor: "#FFFFFF" }}
+          >
+            <Automation automation={automation} isLast={index === automations.length - 1} />
+          </div>
+        ))
+      ) : (
+        <Text as="p">No automations created yet. Click the button to create one!</Text>
+      )}
+    </Box>
+    </div>
   );
 }

@@ -1,4 +1,4 @@
-import { Card, Text, Button } from "@shopify/polaris";
+import { Text, Button } from "@shopify/polaris";
 import { UI_STRINGS } from "../constants/ui";
 import AutomationList from "./AutomationList";
 
@@ -10,7 +10,7 @@ export default function DashboardCard({
   automations: any[];
 }) {
   return (
-    <Card sectioned>
+    <>
       {automations && automations.length > 0 ? (
         <AutomationList automations={automations} />
       ) : (
@@ -33,6 +33,6 @@ export default function DashboardCard({
           </Button>
         </div>
       )}
-    </Card>
+    </>
   );
 }

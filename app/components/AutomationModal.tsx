@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { Modal, FormLayout, TextField, Button, Checkbox, Text, Icon } from "@shopify/polaris";
 import { UI_STRINGS } from "../constants/ui";
-import { EVENT_TEMPLATES, EVENT_DESCRIPTIONS } from "../constants/events";
+import { EVENT_TEMPLATES } from "../constants/events";
 import { useFetcher } from "@remix-run/react";
 import EventSelectionModal from "./EventSelectionModal";
+
 import {
   CartAbandonedIcon,
   CheckCircleIcon,
@@ -54,7 +55,7 @@ export default function AutomationModal({
   const [eventSelectionModalActive, setEventSelectionModalActive] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // ✅ Automatically close modal on success, keep open on error
+  // Automatically close modal on success, keep open on error
   useEffect(() => {
     if (fetcher.data?.success) {
       handleModalChange(); // Close modal on success

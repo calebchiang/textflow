@@ -32,7 +32,7 @@ export const action = async ({ request }) => {
 
     const event = formData.get("event")?.toString();
     const message = formData.get("message")?.toString();
-    const status = formData.get("status") === "true";
+    const status = formData.get("status") === "false";
     const delayMinutes = formData.get("delayMinutes") ? Number(formData.get("delayMinutes")) : 0;
     const recipients = JSON.parse(formData.get("recipients") || "[]");
 
