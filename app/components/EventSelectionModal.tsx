@@ -114,8 +114,8 @@ export default function EventSelectionModal({
                 src={activeEvent ? EVENT_IMAGES[activeEvent] : DEFAULT_SCREEN.image}
                 alt="Event Visual"
                 style={{
-                width: "80px",
-                height: "80px",
+                width: "120px",
+                height: "120px",
                 borderRadius: "20%",
                 objectFit: "cover",
                 marginBottom: "16px",

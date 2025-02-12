@@ -32,8 +32,6 @@ export default function AutomationModal({
   setEvent,
   message,
   setMessage,
-  status,
-  setStatus,
   delayMinutes,
   setDelayMinutes,
   recipients,
@@ -44,8 +42,6 @@ export default function AutomationModal({
   setEvent: (value: string) => void;
   message: string;
   setMessage: (value: string) => void;
-  status: boolean;
-  setStatus: (value: boolean) => void;
   delayMinutes: number;
   setDelayMinutes: (value: number) => void;
   recipients: string[];
@@ -83,7 +79,7 @@ export default function AutomationModal({
                 storeId: "SHOP_ID",
                 event,
                 message,
-                status: status.toString(),
+                status: "false",
                 delayMinutes: delayMinutes.toString(),
                 recipients,
               },
@@ -126,7 +122,6 @@ export default function AutomationModal({
             </div>
 
             <TextField label={UI_STRINGS.SMS_MESSAGE} value={message} onChange={setMessage} multiline={4} />
-            <Checkbox label={UI_STRINGS.ENABLE_AUTOMATION} checked={status} onChange={() => setStatus(!status)} />
             <TextField
               label={UI_STRINGS.DELAY_MINUTES}
               type="number"
