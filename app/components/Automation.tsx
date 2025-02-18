@@ -1,6 +1,8 @@
 import { useState, useCallback } from "react";
+import { useFetcher } from "@remix-run/react";
 import { Text, Button, Popover, ActionList } from "@shopify/polaris";
 import { ChevronDownIcon } from "@shopify/polaris-icons";
+import DeleteConfirmation from "./DeleteConfirmation"; 
 
 export default function Automation({ 
   automation, 
@@ -12,8 +14,18 @@ export default function Automation({
   handleOpenAutomationModal: (automation: any) => void;
 }) {
   const [popoverActive, setPopoverActive] = useState(false);
+  const [deleteModalActive, setDeleteModalActive] = useState(false); 
+  const fetcher = useFetcher();
 
   const togglePopoverActive = useCallback(() => setPopoverActive((active) => !active), []);
+
+  const handleDelete = () => {
+    fetcher.submit(
+      { automationId: automation.id },
+      { method: "delete" }
+    );
+    setDeleteModalActive(false); 
+  };
 
   return (
     <>
@@ -27,22 +39,18 @@ export default function Automation({
           minHeight: "60px",
         }}
       >
-        {/* Event Name */}
         <Text as="h3" variant="bodyMd">
           {automation.event.replace(/_/g, " ")}
         </Text>
 
-        {/* Delay Time */}
         <Text as="p" variant="bodyMd" tone="base">
           {automation.delayMinutes} min
         </Text>
 
-        {/* Status */}
         <Text as="p" fontWeight="bold" tone={automation.status ? "success" : "subdued"}>
           {automation.status ? "Active" : "Draft"}
         </Text>
 
-        {/* Actions Popover */}
         <Popover
           active={popoverActive}
           activator={<Button onClick={togglePopoverActive} icon={ChevronDownIcon} />}
@@ -52,11 +60,17 @@ export default function Automation({
             items={[
               { content: "Publish", onAction: () => console.log("Publishing automation:", automation.id) },
               { content: "Edit", onAction: () => handleOpenAutomationModal(automation) }, 
-              { content: "Delete", destructive: true, onAction: () => console.log("Deleting automation:", automation.id) },
+              { content: "Delete", destructive: true, onAction: () => setDeleteModalActive(true) }, 
             ]}
           />
         </Popover>
       </div>
+
+      <DeleteConfirmation
+        modalActive={deleteModalActive}
+        handleConfirmDelete={handleDelete}
+        handleClose={() => setDeleteModalActive(false)}
+      />
     </>
   );
 }

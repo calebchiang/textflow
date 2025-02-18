@@ -154,3 +154,19 @@ export async function editAutomation({
     throw new Error("Failed to update automation");
   }
 }
+
+/**
+ * Deletes an automation from the database
+ */
+export async function deleteAutomation(automationId: string) {
+  try {
+    const deletedAutomation = await prisma.automation.delete({
+      where: { id: automationId },
+    });
+
+    return { success: true, deletedAutomation };
+  } catch (error) {
+    console.error("Error deleting automation:", error);
+    throw new Error("Failed to delete automation");
+  }
+}

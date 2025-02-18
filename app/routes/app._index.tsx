@@ -1,15 +1,14 @@
 import { useState } from "react";
-import type { LoaderFunctionArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs, ActionFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { Page, Layout } from "@shopify/polaris";
 import { authenticate } from "../shopify.server";
 import { EVENT_TEMPLATES } from "../constants/events";
-import { createAutomation, getAutomationsForStore, editAutomation } from "../utils/automations";
+import { createAutomation, getAutomationsForStore, editAutomation, deleteAutomation } from "../utils/automations";
 import DashboardCard from "../components/DashboardCard";
 import AutomationModal from "../components/AutomationModal";
 import EventSelectionModal from "../components/EventSelectionModal";
-import type { ActionFunctionArgs } from "@remix-run/node";
 
 /**
  * authenticates shopify admin user before rendering the page
@@ -30,8 +29,18 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     const { session } = await authenticate.admin(request);
     const storeId = session.shop;
     const formData = await request.formData();
+    const method = request.method;
 
-    const automationId = formData.get("automationId")?.toString(); // ✅ Get automationId
+    const automationId = formData.get("automationId")?.toString();
+
+    if (method === "DELETE") {
+      if (!automationId) {
+        return json({ success: false, error: "Missing automation ID" }, { status: 400 });
+      }
+
+      await deleteAutomation(automationId);
+      return json({ success: true });
+    }
 
     const event = formData.get("event")?.toString();
     const message = formData.get("message")?.toString();
