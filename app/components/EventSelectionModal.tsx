@@ -88,8 +88,8 @@ export default function EventSelectionModal({
                   }}
                 />
                 <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                  <Icon source={EVENT_ICONS[eventId]} tone="base" style={{ width: "20px", height: "20px" }} />
-                  <Text as="p" fontWeight="bold" fontSize="16px">
+                  <Icon source={EVENT_ICONS[eventId]} tone="base" />
+                  <Text as="p" fontWeight="bold">
                     {eventId.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
                   </Text>
                 </div>
@@ -121,7 +121,7 @@ export default function EventSelectionModal({
                 marginBottom: "16px",
                 }}
             />
-            <Text as="p" fontSize="16px" fontWeight="regular">
+            <Text as="p" fontWeight="regular">
                 {activeEvent ? EVENT_DESCRIPTIONS[activeEvent] : DEFAULT_SCREEN.description}
             </Text>
           </div>

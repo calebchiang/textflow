@@ -1,7 +1,7 @@
 import { Box, Text, Button } from "@shopify/polaris";
 import Automation from "./Automation";
 
-export default function AutomationList({ automations, onOpenModal }: { automations: any[], onOpenModal: () => void }) {
+export default function AutomationList({ automations, onOpenModal }: { automations: any[], onOpenModal: (automation?: any) => void }) {
   return (
     <div style={{ borderRadius: "5px", overflow: "hidden"}}>
     <Box background="bg-surface">
@@ -16,10 +16,9 @@ export default function AutomationList({ automations, onOpenModal }: { automatio
         }}
       >
         <Text as="h1" variant="headingXl">Automations</Text>
-        <Button onClick={onOpenModal}> ➕ </Button>
+        <Button onClick={() => onOpenModal(null)}> ➕ </Button>
       </div>
 
-      {/* Column Headers (Darker Background) */}
       {automations.length > 0 && (
         <div
         style={{
@@ -47,7 +46,11 @@ export default function AutomationList({ automations, onOpenModal }: { automatio
             key={automation.id} 
             style={{ backgroundColor: "#FFFFFF" }}
           >
-            <Automation automation={automation} isLast={index === automations.length - 1} />
+            <Automation 
+              automation={automation} 
+              isLast={index === automations.length - 1} 
+              handleOpenAutomationModal={onOpenModal} 
+            />
           </div>
         ))
       ) : (

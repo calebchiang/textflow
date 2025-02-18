@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Modal, FormLayout, TextField, Button, Checkbox, Text, Icon } from "@shopify/polaris";
+import { Modal, FormLayout, TextField, Button, Text, Icon } from "@shopify/polaris";
 import { UI_STRINGS } from "../constants/ui";
 import { EVENT_TEMPLATES } from "../constants/events";
 import { useFetcher } from "@remix-run/react";
@@ -26,8 +26,10 @@ const EVENT_ICONS: Record<string, any> = {
 };
 
 export default function AutomationModal({
+  automationId,
   modalActive,
   handleModalChange,
+  handleCloseEventSelectionModal,
   event,
   setEvent,
   message,
@@ -36,8 +38,10 @@ export default function AutomationModal({
   setDelayMinutes,
   recipients,
 }: {
+  automationId?: string | null;
   modalActive: boolean;
   handleModalChange: () => void;
+  handleCloseEventSelectionModal: () => void;
   event: string;
   setEvent: (value: string) => void;
   message: string;
@@ -51,16 +55,16 @@ export default function AutomationModal({
   const [eventSelectionModalActive, setEventSelectionModalActive] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Automatically close modal on success, keep open on error
   useEffect(() => {
-    if (fetcher.data?.success) {
-      handleModalChange(); // Close modal on success
-      setErrorMessage(null); // Clear any previous errors
-    } else if (fetcher.data?.error) {
-      setErrorMessage(fetcher.data.error); // Display error if submission fails
+    if (fetcher.state === "idle" && fetcher.data?.success) {
+      handleModalChange(); 
+      handleCloseEventSelectionModal(); 
+      fetcher.data = null; 
+    } else if (fetcher.state === "idle" && fetcher.data?.error) {
+      setErrorMessage(fetcher.data.error);
     }
-  }, [fetcher.data, handleModalChange]);
-
+  }, [fetcher.state, fetcher.data, handleModalChange, handleCloseEventSelectionModal, fetcher]);
+  
   const handleEventSelectionModalChange = () => {
     setEventSelectionModalActive(!eventSelectionModalActive);
   };
@@ -70,28 +74,28 @@ export default function AutomationModal({
       <Modal
         open={modalActive}
         onClose={handleModalChange}
-        title={UI_STRINGS.MODAL_TITLE}
+        title={automationId ? UI_STRINGS.EDIT_AUTOMATION_TITLE : UI_STRINGS.MODAL_TITLE}
         primaryAction={{
-          content: isSubmitting ? "Saving..." : UI_STRINGS.SAVE_AUTOMATION,
-          onAction: () =>
-            fetcher.submit(
-              {
-                storeId: "SHOP_ID",
-                event,
-                message,
-                status: "false",
-                delayMinutes: delayMinutes.toString(),
-                recipients,
-              },
-              { method: "post" }
-            ),
+          content: isSubmitting ? "Saving..." : automationId ? UI_STRINGS.UPDATE_AUTOMATION : UI_STRINGS.SAVE_AUTOMATION,
+          onAction: () => {
+            const formData = new FormData();
+            if (automationId) formData.append("automationId", automationId);
+            formData.append("storeId", "SHOP_ID");
+            formData.append("event", event);
+            formData.append("message", message);
+            formData.append("delayMinutes", delayMinutes.toString());
+            formData.append("recipients", JSON.stringify(recipients)); 
+
+            fetcher.submit(formData, {
+              method: automationId ? "put" : "post", 
+            });
+          },
           disabled: isSubmitting,
         }}
         secondaryActions={[{ content: UI_STRINGS.CANCEL, onAction: handleModalChange }]}
       >
         <Modal.Section>
           <FormLayout>
-            {/* Display Selected Event Instead of "Select Event" Button */}
             <div
               style={{
                 display: "flex",
@@ -105,8 +109,8 @@ export default function AutomationModal({
               {event ? (
                 <>
                   <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                    <Icon source={EVENT_ICONS[event]} tone="base" style={{ width: "24px", height: "24px" }} />
-                    <Text as="p" fontWeight="bold" fontSize="16px">
+                    <Icon source={EVENT_ICONS[event]} tone="base"/>
+                    <Text as="p" fontWeight="bold">
                       {event.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
                     </Text>
                   </div>
@@ -121,13 +125,14 @@ export default function AutomationModal({
               )}
             </div>
 
-            <TextField label={UI_STRINGS.SMS_MESSAGE} value={message} onChange={setMessage} multiline={4} />
+            <TextField label={UI_STRINGS.SMS_MESSAGE} value={message} onChange={setMessage} multiline={4} autoComplete="off" />
             <TextField
               label={UI_STRINGS.DELAY_MINUTES}
               type="number"
               value={delayMinutes.toString()}
               onChange={(value) => setDelayMinutes(parseInt(value) || 0)}
               min={0}
+              autoComplete="off"
             />
 
             {errorMessage && <p style={{ color: "red", fontWeight: "bold", marginTop: "10px" }}>❌ {errorMessage}</p>}
@@ -135,7 +140,7 @@ export default function AutomationModal({
         </Modal.Section>
       </Modal>
 
-      {/* EventSelectionModal */}
+      {/* ✅ EventSelectionModal */}
       <EventSelectionModal
         modalActive={eventSelectionModalActive}
         handleClose={handleEventSelectionModalChange}
