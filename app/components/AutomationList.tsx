@@ -1,5 +1,6 @@
 import { Box, Text, Button } from "@shopify/polaris";
 import Automation from "./Automation";
+import { PlusCircleIcon } from "@shopify/polaris-icons";
 
 export default function AutomationList({ automations, onOpenModal }: { automations: any[], onOpenModal: (automation?: any) => void }) {
   return (
@@ -16,9 +17,10 @@ export default function AutomationList({ automations, onOpenModal }: { automatio
         }}
       >
         <Text as="h1" variant="headingXl">Automations</Text>
-        <Button onClick={() => onOpenModal(null)}> ➕ </Button>
-      </div>
-
+        <Button onClick={() => onOpenModal(null)} icon={PlusCircleIcon}>
+          Add
+        </Button>      
+        </div>
       {automations.length > 0 && (
         <div
         style={{

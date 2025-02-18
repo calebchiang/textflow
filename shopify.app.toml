@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "5345e7f4c5e5f37f60517703f9f829e6"
-application_url = "https://directory-kick-sample-supplied.trycloudflare.com"
+application_url = "https://past-ctrl-aruba-medium.trycloudflare.com"
 embedded = true
 name = "text-flow"
 handle = "text-flow"
@@ -23,9 +23,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://directory-kick-sample-supplied.trycloudflare.com/auth/callback",
-  "https://directory-kick-sample-supplied.trycloudflare.com/auth/shopify/callback",
-  "https://directory-kick-sample-supplied.trycloudflare.com/api/auth/callback"
+  "https://past-ctrl-aruba-medium.trycloudflare.com/auth/callback",
+  "https://past-ctrl-aruba-medium.trycloudflare.com/auth/shopify/callback",
+  "https://past-ctrl-aruba-medium.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]

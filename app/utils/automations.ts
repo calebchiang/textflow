@@ -5,6 +5,7 @@ import { prisma } from "../../prisma/prisma.server";
  */
 export async function createAutomation({
   storeId,
+  name,
   event,
   message,
   status,
@@ -12,6 +13,7 @@ export async function createAutomation({
   recipients,
 }: {
   storeId: string;
+  name: string;
   event: string;
   message: string;
   status: boolean;
@@ -39,6 +41,7 @@ export async function createAutomation({
     const automation = await prisma.automation.create({
       data: {
         storeId,
+        name,
         event,
         message,
         status,
@@ -91,6 +94,7 @@ export async function getAutomationsForStore(storeId: string) {
 export async function editAutomation({
   automationId,
   storeId,
+  name,
   event,
   message,
   delayMinutes,
@@ -98,6 +102,7 @@ export async function editAutomation({
 }: {
   automationId: string;
   storeId: string;
+  name: string;
   event: string;
   message: string;
   delayMinutes?: number;
@@ -120,7 +125,6 @@ export async function editAutomation({
     });
 
     const existingCustomerIds = existingCustomers.map((customer) => customer.id);
-    console.log("Existing customer IDs:", existingCustomerIds);
 
     // Find missing recipients
     const missingRecipients = recipients.filter((id) => !existingCustomerIds.includes(id));
@@ -133,6 +137,7 @@ export async function editAutomation({
     const updatedAutomation = await prisma.automation.update({
       where: { id: automationId },
       data: {
+        name,
         event,
         message,
         delayMinutes: delayMinutes ?? 0,

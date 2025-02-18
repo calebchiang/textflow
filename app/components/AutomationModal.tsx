@@ -37,6 +37,8 @@ export default function AutomationModal({
   delayMinutes,
   setDelayMinutes,
   recipients,
+  name,
+  setName,
 }: {
   automationId?: string | null;
   modalActive: boolean;
@@ -49,6 +51,8 @@ export default function AutomationModal({
   delayMinutes: number;
   setDelayMinutes: (value: number) => void;
   recipients: string[];
+  name: string;
+  setName: (value: string) => void;
 }) {
   const fetcher = useFetcher();
   const isSubmitting = fetcher.state === "submitting";
@@ -81,6 +85,7 @@ export default function AutomationModal({
             const formData = new FormData();
             if (automationId) formData.append("automationId", automationId);
             formData.append("storeId", "SHOP_ID");
+            formData.append("name", name);
             formData.append("event", event);
             formData.append("message", message);
             formData.append("delayMinutes", delayMinutes.toString());
@@ -124,7 +129,13 @@ export default function AutomationModal({
                 </Button>
               )}
             </div>
-
+            <TextField
+              label="Name"
+              value={name}
+              onChange={setName}
+              placeholder="Enter a name for this automation"
+              autoComplete="off"
+              />
             <TextField label={UI_STRINGS.SMS_MESSAGE} value={message} onChange={setMessage} multiline={4} autoComplete="off" />
             <TextField
               label={UI_STRINGS.DELAY_MINUTES}
@@ -140,7 +151,6 @@ export default function AutomationModal({
         </Modal.Section>
       </Modal>
 
-      {/* ✅ EventSelectionModal */}
       <EventSelectionModal
         modalActive={eventSelectionModalActive}
         handleClose={handleEventSelectionModalChange}

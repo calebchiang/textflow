@@ -40,7 +40,7 @@ export default function Automation({
         }}
       >
         <Text as="h3" variant="bodyMd">
-          {automation.event.replace(/_/g, " ")}
+          {automation.name}
         </Text>
 
         <Text as="p" variant="bodyMd" tone="base">

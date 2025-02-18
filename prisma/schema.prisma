@@ -31,10 +31,10 @@ model Session {
   emailVerified Boolean?  @default(false)
 }
 
-
 model Automation {
   id           String    @id @default(uuid()) // Unique automation ID
   storeId      String    // Shopify Store ID
+  name         String    // Automation name
   event        String    // Trigger event (abandoned_cart, order_confirmation, etc.)
   message      String    // SMS content
   status       Boolean   @default(true) // Enable/disable automation
