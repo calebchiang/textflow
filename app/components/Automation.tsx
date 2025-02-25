@@ -3,6 +3,7 @@ import { useFetcher } from "@remix-run/react";
 import { Text, Button, Popover, ActionList } from "@shopify/polaris";
 import { ChevronDownIcon } from "@shopify/polaris-icons";
 import DeleteConfirmation from "./DeleteConfirmation"; 
+import PublishConfirmation from "./PublishConfirmation";
 
 export default function Automation({ 
   automation, 
@@ -15,6 +16,8 @@ export default function Automation({
 }) {
   const [popoverActive, setPopoverActive] = useState(false);
   const [deleteModalActive, setDeleteModalActive] = useState(false); 
+  const [publishModalActive, setPublishModalActive] = useState(false);
+  const [automationStatus, setAutomationStatus] = useState(automation.status);
   const fetcher = useFetcher();
 
   const togglePopoverActive = useCallback(() => setPopoverActive((active) => !active), []);
@@ -25,6 +28,33 @@ export default function Automation({
       { method: "delete" }
     );
     setDeleteModalActive(false); 
+  };
+
+  const handlePublish = async () => {
+    try {
+      console.log("Publishing automation:", automation.id);
+      const phoneNumber = "17788231022";
+
+      const formData = new FormData();
+      formData.append("phoneNumber", phoneNumber);
+      formData.append("message", automation.message);
+
+      const response = await fetch("/api/send-sms", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        console.log("SMS sent succesfully:", result);
+        setAutomationStatus(true);
+      } else {
+        console.error("Failed to send SMS:", result.error);
+      }
+    } catch(error) {
+      console.error("Error:", error);
+    }
+    setPublishModalActive(false);
   };
 
   return (
@@ -47,8 +77,8 @@ export default function Automation({
           {automation.delayMinutes} min
         </Text>
 
-        <Text as="p" fontWeight="bold" tone={automation.status ? "success" : "subdued"}>
-          {automation.status ? "Active" : "Draft"}
+        <Text as="p" fontWeight="bold" tone={automationStatus ? "success" : "subdued"}>
+          {automationStatus ? "Active" : "Draft"}
         </Text>
 
         <Popover
@@ -58,7 +88,7 @@ export default function Automation({
         >
           <ActionList
             items={[
-              { content: "Publish", onAction: () => console.log("Publishing automation:", automation.id) },
+              { content: "Publish", onAction: () => setPublishModalActive(true)},
               { content: "Edit", onAction: () => handleOpenAutomationModal(automation) }, 
               { content: "Delete", destructive: true, onAction: () => setDeleteModalActive(true) }, 
             ]}
@@ -70,6 +100,12 @@ export default function Automation({
         modalActive={deleteModalActive}
         handleConfirmDelete={handleDelete}
         handleClose={() => setDeleteModalActive(false)}
+      />
+
+      <PublishConfirmation
+        modalActive={publishModalActive}
+        handleConfirmPublish={handlePublish}
+        handleClose={() => setPublishModalActive(false)}
       />
     </>
   );
