@@ -1,36 +1,57 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "5345e7f4c5e5f37f60517703f9f829e6"
-application_url = "https://projectors-destination-republic-cherry.trycloudflare.com"
+application_url = "https://surf-urw-deadly-knowledge.trycloudflare.com"
 embedded = true
 name = "text-flow"
 handle = "text-flow"
 
+[build]
+automatically_update_urls_on_dev = true
+dev_store_url = "textflow-dev.myshopify.com"
+include_config_on_deploy = true
+
 [webhooks]
 api_version = "2025-01"
+
+  [[webhooks.subscriptions]]
+  topics = [ "app/scopes_update" ]
+  uri = "/webhooks/app/scopes_update"
 
   [[webhooks.subscriptions]]
   topics = [ "app/uninstalled" ]
   uri = "/webhooks/app/uninstalled"
 
   [[webhooks.subscriptions]]
-  topics = [ "app/scopes_update" ]
-  uri = "/webhooks/app/scopes_update"
+  topics = [ "orders/create" ]
+  uri = "/webhooks/orders/create"
+
+  [[webhooks.subscriptions]]
+  topics = [ "carts/create" ]
+  uri = "/webhooks/carts/create"
+
+  [[webhooks.subscriptions]]
+  topics = [ "fulfillments/create" ]
+  uri = "/webhooks/fulfillments/create"
+
+  [[webhooks.subscriptions]]
+  topics = [ "orders/fulfilled" ]
+  uri = "/webhooks/orders/fulfilled"
+
+  [[webhooks.subscriptions]]
+  topics = [ "customers/create" ]
+  uri = "/webhooks/customers/create"
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "write_products"
+scopes = "read_orders, write_orders, read_customers, write_customers, read_fulfillments, write_fulfillments, write_products"
 
 [auth]
 redirect_urls = [
-  "https://projectors-destination-republic-cherry.trycloudflare.com/auth/callback",
-  "https://projectors-destination-republic-cherry.trycloudflare.com/auth/shopify/callback",
-  "https://projectors-destination-republic-cherry.trycloudflare.com/api/auth/callback"
+  "https://surf-urw-deadly-knowledge.trycloudflare.com/auth/callback",
+  "https://surf-urw-deadly-knowledge.trycloudflare.com/auth/shopify/callback",
+  "https://surf-urw-deadly-knowledge.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]
 embedded = false
-
-[build]
-dev_store_url = "textflow-dev.myshopify.com"
-automatically_update_urls_on_dev = true

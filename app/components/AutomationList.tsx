@@ -40,8 +40,6 @@ export default function AutomationList({ automations, onOpenModal }: { automatio
           <Text as="p" variant="bodyMd" tone="subdued">Actions</Text>
         </div>
       )}
-
-      {/* Automation Rows (White Background) */}
       {automations.length > 0 ? (
         automations.map((automation, index) => (
           <div 
