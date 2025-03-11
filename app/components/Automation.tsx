@@ -33,26 +33,22 @@ export default function Automation({
   const handlePublish = async () => {
     try {
       console.log("Publishing automation:", automation.id);
-      const phoneNumber = "17788231022";
 
-      const formData = new FormData();
-      formData.append("phoneNumber", phoneNumber);
-      formData.append("message", automation.message);
-
-      const response = await fetch("/api/send-sms", {
+      const response = await fetch("/api/update/status", {
         method: "POST",
-        body: formData,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ automationId: automation.id, status: true }),
       });
 
       const result = await response.json();
       if (result.success) {
-        console.log("SMS sent succesfully:", result);
         setAutomationStatus(true);
+        console.log("Automation status updated successfully:", result);
       } else {
-        console.error("Failed to send SMS:", result.error);
+        console.error("Failed to update automation status:", result.error);
       }
     } catch(error) {
-      console.error("Error:", error);
+      console.error("Error updating automation status:", error);
     }
     setPublishModalActive(false);
   };

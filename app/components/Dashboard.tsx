@@ -3,47 +3,47 @@ import { Page, Layout } from "@shopify/polaris";
 import { EVENT_TEMPLATES } from "../constants/events";
 import DashboardCard from "./DashboardCard";
 import AutomationModal from "./AutomationModal";
-import EventSelectionModal from "./EventSelectionModal";
 
 export default function Dashboard({ automations }: { automations: any[] }) {
-  const [eventSelectionModalActive, setEventSelectionModalActive] = useState(false);
   const [automationModalActive, setAutomationModalActive] = useState(false);
+  const [selectedAutomation, setSelectedAutomation] = useState<any | null>(null);
   const [event, setEvent] = useState<string | null>(null);
   const [name, setName] = useState("");
-  const [selectedAutomation, setSelectedAutomation] = useState<any | null>(null);
   const [message, setMessage] = useState("");
   const [delayMinutes, setDelayMinutes] = useState(0);
   const [recipients, setRecipients] = useState([]);
-
-  const handleCloseEventSelectionModal = () => setEventSelectionModalActive(false);
+  const [currentStep, setCurrentStep] = useState(1); 
 
   const handleOpenAutomationModal = (selectedEventOrAutomation?: string | any) => {
+    setCurrentStep(1);
     if (!selectedEventOrAutomation) {
+      // User is creating a new automation
       setSelectedAutomation(null);
       setName("");
       setEvent(null);
       setMessage("");
       setDelayMinutes(0);
       setRecipients([]);
-      setEventSelectionModalActive(true);
     } else if (typeof selectedEventOrAutomation === "string") {
+      // User has selected an event to start an automation
       setSelectedAutomation(null);
       setName("");
       setEvent(selectedEventOrAutomation);
       setMessage(EVENT_TEMPLATES[selectedEventOrAutomation] || "");
       setDelayMinutes(0);
       setRecipients([]);
-      setEventSelectionModalActive(false);
-      setAutomationModalActive(true);
     } else {
+      // User is editing an existing automation
       setSelectedAutomation(selectedEventOrAutomation);
       setName(selectedEventOrAutomation.name);
       setEvent(selectedEventOrAutomation.event);
       setMessage(selectedEventOrAutomation.message);
       setDelayMinutes(selectedEventOrAutomation.delayMinutes);
       setRecipients(selectedEventOrAutomation.recipients.map((r: any) => r.customer.id));
-      setAutomationModalActive(true);
     }
+
+    // Open Automation Modal
+    setAutomationModalActive(true);
   };
 
   const handleCloseAutomationModal = () => {
@@ -59,17 +59,10 @@ export default function Dashboard({ automations }: { automations: any[] }) {
         </Layout.Section>
       </Layout>
 
-      <EventSelectionModal
-        modalActive={eventSelectionModalActive}
-        handleClose={handleCloseEventSelectionModal}
-        handleContinue={handleOpenAutomationModal}
-      />
-
       <AutomationModal
         automationId={selectedAutomation?.id ?? null}
         modalActive={automationModalActive}
         handleModalChange={handleCloseAutomationModal}
-        handleCloseEventSelectionModal={handleCloseEventSelectionModal}
         event={event ?? ""}
         setEvent={setEvent}
         name={name}
@@ -79,6 +72,8 @@ export default function Dashboard({ automations }: { automations: any[] }) {
         delayMinutes={delayMinutes}
         setDelayMinutes={setDelayMinutes}
         recipients={recipients}
+        currentStep={currentStep} 
+        setCurrentStep={setCurrentStep}
       />
     </Page>
   );

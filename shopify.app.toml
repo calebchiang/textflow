@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "5345e7f4c5e5f37f60517703f9f829e6"
-application_url = "https://surf-urw-deadly-knowledge.trycloudflare.com"
+application_url = "https://pattern-advisor-analyst-sport.trycloudflare.com"
 embedded = true
 name = "text-flow"
 handle = "text-flow"
@@ -42,15 +42,19 @@ api_version = "2025-01"
   topics = [ "customers/create" ]
   uri = "/webhooks/customers/create"
 
+  [[webhooks.subscriptions]]
+  topics = [ "customers/update" ]
+  uri = "/webhooks/customers/update"
+
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
 scopes = "read_orders, write_orders, read_customers, write_customers, read_fulfillments, write_fulfillments, write_products"
 
 [auth]
 redirect_urls = [
-  "https://surf-urw-deadly-knowledge.trycloudflare.com/auth/callback",
-  "https://surf-urw-deadly-knowledge.trycloudflare.com/auth/shopify/callback",
-  "https://surf-urw-deadly-knowledge.trycloudflare.com/api/auth/callback"
+  "https://pattern-advisor-analyst-sport.trycloudflare.com/auth/callback",
+  "https://pattern-advisor-analyst-sport.trycloudflare.com/auth/shopify/callback",
+  "https://pattern-advisor-analyst-sport.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]

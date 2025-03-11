@@ -3,7 +3,9 @@ import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { authenticate } from "../shopify.server";
 import { createAutomation, getAutomationsForStore, editAutomation, deleteAutomation } from "../utils/automations";
+import { hasCompletedSetup, markSetupComplete } from "../utils/session";
 import Dashboard from "../components/Dashboard";
+import GetStarted from "../components/GetStarted";
 
 /**
  * Authenticates Shopify admin user before rendering the page.
@@ -11,8 +13,12 @@ import Dashboard from "../components/Dashboard";
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { session } = await authenticate.admin(request);
   const storeId = session.shop;
-  const automations = await getAutomationsForStore(storeId);
-  return json({ automations });
+
+  // Check if store has completed setup
+  const completedSetup = await hasCompletedSetup(storeId);
+  const automations = completedSetup ? await getAutomationsForStore(storeId) : [];
+
+  return json({ completedSetup, automations });
 };
 
 /**
@@ -24,6 +30,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     const storeId = session.shop;
     const formData = await request.formData();
     const method = request.method;
+
+    if (method === "POST" && formData.get("syncCustomers")) {
+      // Handle customer sync and mark setup as complete
+      await markSetupComplete(storeId);
+      return json({ success: true });
+    }
 
     const automationId = formData.get("automationId")?.toString();
 
@@ -77,9 +89,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 };
 
 /**
- * Main page component that renders the Dashboard.
+ * Main page component that conditionally renders GetStarted or Dashboard.
  */
 export default function Index() {
-  const automations = useLoaderData<typeof loader>().automations;
-  return <Dashboard automations={automations} />;
+  const { completedSetup, automations } = useLoaderData<typeof loader>();
+
+  return completedSetup ? <Dashboard automations={automations} /> : <GetStarted />;
 }
