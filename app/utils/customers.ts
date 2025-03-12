@@ -128,3 +128,74 @@ export async function addCustomerToDatabase(customer: {
     return { success: false, message: "Database error" };
   }
 }
+
+/**
+ * Updates an existing customer's data in the database.
+ * If the customer does not exist, it returns without making changes.
+ */
+export async function updateCustomerInDatabase(customer: {
+  id: string;
+  storeId: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phoneNumber?: string;
+}) {
+  try {
+    // Check if the customer exists before attempting an update
+    const existingCustomer = await prisma.customer.findUnique({
+      where: { id: customer.id },
+    });
+
+    if (!existingCustomer) {
+      // Customer does not exist, return without doing anything
+      return { success: false };
+    }
+
+    // Update customer details
+    await prisma.customer.update({
+      where: { id: customer.id },
+      data: {
+        firstName: customer.firstName || existingCustomer.firstName,
+        lastName: customer.lastName || existingCustomer.lastName,
+        email: customer.email || existingCustomer.email,
+        phoneNumber: customer.phoneNumber || existingCustomer.phoneNumber,
+      },
+    });
+
+    console.log(`✅ Customer ${customer.id} updated successfully.`);
+    return { success: true };
+  } catch (error) {
+    console.error("❌ Error updating customer in database:", error);
+    return { success: false, error: "Database update error" };
+  }
+}
+
+/**
+ * Deletes a customer from the database.
+ * If the customer does not exist, it returns without making changes.
+ */
+export async function deleteCustomerFromDatabase(customerId: string) {
+  try {
+    // Check if the customer exists before attempting a deletion
+    const existingCustomer = await prisma.customer.findUnique({
+      where: { id: customerId },
+    });
+
+    if (!existingCustomer) {
+      console.warn(`⚠️ Customer ${customerId} not found in database, nothing to delete.`);
+      return { success: false, message: "Customer not found" };
+    }
+
+    // Delete customer from the database
+    await prisma.customer.delete({
+      where: { id: customerId },
+    });
+
+    console.log(`✅ Customer ${customerId} deleted successfully.`);
+    return { success: true };
+  } catch (error) {
+    console.error("❌ Error deleting customer from database:", error);
+    return { success: false, error: "Database delete error" };
+  }
+}

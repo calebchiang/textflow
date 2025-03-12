@@ -198,7 +198,9 @@ export default function AutomationModal({
             handleBack={goBack}
             handleSave={handleSaveAutomation}
             recipients={recipients}
-            setRecipients={setRecipients}
+            setRecipients={ 
+              setRecipients
+            }
           />
         )}
 

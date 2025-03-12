@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FormLayout, Select, Button } from "@shopify/polaris";
+import { FormLayout, Checkbox, Spinner } from "@shopify/polaris";
 import { useFetcher } from "@remix-run/react";
 
 export default function RecipientSelection({
@@ -28,24 +28,32 @@ export default function RecipientSelection({
     }
   }, [fetcher.data]);
 
-  const handleChange = (selected: string[]) => {
-    setRecipients(selected);
+  const handleCheckboxChange = (customerId: string, newChecked: boolean) => {
+    setRecipients((prevRecipients: string[]) => {
+      const updatedRecipients = newChecked
+        ? [...prevRecipients, customerId]
+        : prevRecipients.filter((id) => id !== customerId);
+  
+      console.log("Updated Recipients List:", updatedRecipients);
+      return updatedRecipients;
+    });
   };
 
   return (
     <div>
       <FormLayout>
-        <Select
-          label="Select Recipients"
-          options={customers.map((customer) => ({
-            label: `${customer.firstName} ${customer.lastName}`,
-            value: customer.id,
-          }))}
-          onChange={handleChange}
-          value={recipients}
-          disabled={loading}
-          multiple
-        />
+        {loading ? (
+          <Spinner accessibilityLabel="Loading customers" size="large" />
+        ) : (
+          customers.map((customer) => (
+            <Checkbox
+              key={customer.id}
+              label={`${customer.firstName} ${customer.lastName}`}
+              checked={recipients.includes(customer.id)}
+              onChange={(newChecked) => handleCheckboxChange(customer.id, newChecked)}
+            />
+          ))
+        )}
       </FormLayout>
     </div>
   );

@@ -11,7 +11,7 @@ export default function Dashboard({ automations }: { automations: any[] }) {
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
   const [delayMinutes, setDelayMinutes] = useState(0);
-  const [recipients, setRecipients] = useState([]);
+  const [recipients, setRecipients] = useState<string[]>([]);
   const [currentStep, setCurrentStep] = useState(1); 
 
   const handleOpenAutomationModal = (selectedEventOrAutomation?: string | any) => {
@@ -74,6 +74,7 @@ export default function Dashboard({ automations }: { automations: any[] }) {
         recipients={recipients}
         currentStep={currentStep} 
         setCurrentStep={setCurrentStep}
+        setRecipients={setRecipients} 
       />
     </Page>
   );

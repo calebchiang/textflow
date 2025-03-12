@@ -12,9 +12,9 @@ export async function sendSMS(to: string, message: string): Promise<void> {
       from: process.env.TWILIO_PHONE_NUMBER as string,
       to,
     });
-    console.log("SMS sent successfully:", response.sid);
+    console.log("🟢 Twilio Response:", response);
   } catch (error) {
-    console.error("Twilio SMS Error:", error);
+    console.error("🔴 Twilio API Error:", error);
     throw new Error("Failed to send SMS");
   }
 }
