@@ -192,30 +192,3 @@ export async function updateAutomationStatus(automationId: string, status: boole
     throw new Error("Failed to update automation status");
   }
 }
-
-/**
- * Fetches all `order_confirmation` automations for a given store, including recipients.
- */
-export async function getOrderConfirmationAutomations(storeId: string) {
-  try {
-    const automations = await prisma.automation.findMany({
-      where: {
-        storeId: storeId,
-        event: "order_confirmation",
-        status: true, // Only fetch enabled automations
-      },
-      include: {
-        recipients: {
-          include: {
-            customer: true, // Fetch recipient details
-          },
-        },
-      },
-    });
-
-    return automations;
-  } catch (error) {
-    console.error("Error fetching order confirmation automations:", error);
-    throw new Error("Failed to retrieve order confirmation automations");
-  }
-}
