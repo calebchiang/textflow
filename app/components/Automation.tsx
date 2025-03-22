@@ -46,10 +46,28 @@ export default function Automation({
         console.log("Automation status updated successfully:", result);
       } else {
         console.error("Failed to update automation status:", result.error);
+        setPublishModalActive(false);
+        return;
       }
-    } catch(error) {
-      console.error("Error updating automation status:", error);
+
+      if (automation.event === "send_limited_time_promotion") {
+        const sendResponse = await fetch("/api/send/promotion", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ automationId: automation.id }),
+        });
+  
+        const sendResult = await sendResponse.json();
+        if (sendResult.success) {
+          console.log("✅ Promotion SMS sent successfully:", sendResult.results);
+        } else {
+          console.error("❌ Failed to send promotion SMS:", sendResult.error);
+        }
+      }
+    } catch (error) {
+      console.error("Error publishing automation:", error);
     }
+  
     setPublishModalActive(false);
   };
 

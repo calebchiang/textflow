@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "5345e7f4c5e5f37f60517703f9f829e6"
-application_url = "https://securities-hack-library-sees.trycloudflare.com"
+application_url = "https://dried-structure-ya-purchasing.trycloudflare.com"
 embedded = true
 name = "text-flow"
 handle = "text-flow"
@@ -31,6 +31,10 @@ api_version = "2025-01"
   uri = "/webhooks/carts/create"
 
   [[webhooks.subscriptions]]
+  topics = [ "checkouts/create" ]
+  uri = "/webhooks/checkouts/create"
+
+  [[webhooks.subscriptions]]
   topics = [ "fulfillments/create" ]
   uri = "/webhooks/fulfillments/create"
 
@@ -50,15 +54,19 @@ api_version = "2025-01"
   topics = [ "customers/delete" ]
   uri = "/webhooks/customers/delete"
 
+  [[webhooks.subscriptions]]
+  topics = [ "fulfillments/update" ]
+  uri = "/webhooks/fulfillments/update"
+
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
 scopes = "read_orders, write_orders, read_customers, write_customers, read_fulfillments, write_fulfillments, write_products"
 
 [auth]
 redirect_urls = [
-  "https://securities-hack-library-sees.trycloudflare.com/auth/callback",
-  "https://securities-hack-library-sees.trycloudflare.com/auth/shopify/callback",
-  "https://securities-hack-library-sees.trycloudflare.com/api/auth/callback"
+  "https://dried-structure-ya-purchasing.trycloudflare.com/auth/callback",
+  "https://dried-structure-ya-purchasing.trycloudflare.com/auth/shopify/callback",
+  "https://dried-structure-ya-purchasing.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]

@@ -40,14 +40,15 @@ export async function syncCustomersFromShopify(storeId: string, accessToken: str
 
     // Store customers in database
     for (const customer of customers) {
+      const rawId = customer.id.split("/").pop(); 
       const existingCustomer = await prisma.customer.findUnique({
-        where: { id: customer.id },
+        where: { id: rawId },
       });
 
       if (!existingCustomer) {
         await prisma.customer.create({
           data: {
-            id: customer.id,
+            id: rawId,
             storeId,
             firstName: customer.firstName,
             lastName: customer.lastName,
@@ -99,8 +100,10 @@ export async function addCustomerToDatabase(customer: {
 }) {
   try {
     // Check if the customer already exists
+    const rawId = customer.id.split("/").pop();
+
     const existingCustomer = await prisma.customer.findUnique({
-      where: { id: customer.id },
+      where: { id: rawId },
     });
 
     if (existingCustomer) {
@@ -111,7 +114,7 @@ export async function addCustomerToDatabase(customer: {
     // Insert the new customer
     await prisma.customer.create({
       data: {
-        id: customer.id,
+        id: rawId,
         storeId: customer.storeId,
         firstName: customer.firstName || null,
         lastName: customer.lastName || null,
@@ -143,8 +146,10 @@ export async function updateCustomerInDatabase(customer: {
 }) {
   try {
     // Check if the customer exists before attempting an update
+    const rawId = customer.id.split("/").pop();
+
     const existingCustomer = await prisma.customer.findUnique({
-      where: { id: customer.id },
+      where: { id: rawId },
     });
 
     if (!existingCustomer) {
@@ -154,7 +159,7 @@ export async function updateCustomerInDatabase(customer: {
 
     // Update customer details
     await prisma.customer.update({
-      where: { id: customer.id },
+      where: { id: rawId },
       data: {
         firstName: customer.firstName || existingCustomer.firstName,
         lastName: customer.lastName || existingCustomer.lastName,

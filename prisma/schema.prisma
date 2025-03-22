@@ -55,6 +55,8 @@ model Customer {
   createdAt    DateTime  @default(now()) // When the customer was added
 
   automations  AutomationRecipient[] // Many-to-many relationship
+  abandonedCarts AbandonedCart[] // One-to-many relationship with abandoned carts
+
 }
 
 // Join table for many-to-many relationship
@@ -66,4 +68,15 @@ model AutomationRecipient {
 
   automation   Automation @relation(fields: [automationId], references: [id], onDelete: Cascade)
   customer     Customer   @relation(fields: [customerId], references: [id], onDelete: Cascade)
+}
+
+model AbandonedCart {
+  id         String   @id @default(uuid()) // Unique ID for abandoned cart entry
+  storeId    String   // Shopify Store ID (ensures abandoned carts are linked to the right merchant)
+  checkoutId String   @unique // Ensure each checkoutId is unique
+  customerId String?  // Nullable, because guest users might not have a customer ID
+  createdAt  DateTime @default(now()) // Timestamp when the cart was abandoned
+  expiresAt  DateTime // Timestamp when cart is considered abandoned
+
+  customer   Customer? @relation(fields: [customerId], references: [id], onDelete: Cascade) // Nullable relation
 }
