@@ -21,7 +21,7 @@ export default function Sidebar() {
       <div className="mb-10 flex justify-center">
         <Link href="/">
           <Image
-            src="/logo.png"
+            src="/logo_2.png"
             alt="Textflow Logo"
             width={60}
             height={60}
