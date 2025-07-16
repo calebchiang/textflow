@@ -40,10 +40,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${openSans.variable} antialiased`}
       >
         <div className="min-h-screen flex flex-col">
-          {/* Top navbar */}
           <Navbar />
-
-          {/* Main section with sidebar + content */}
           <div className="flex flex-1">
             <Sidebar />
             <main className="flex-1">{children}</main>
