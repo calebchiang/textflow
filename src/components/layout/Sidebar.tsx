@@ -8,13 +8,11 @@ import { usePathname } from 'next/navigation'
 const navItems = [
   { name: 'Dashboard', href: '/dashboard', icon: <LayoutDashboard className="w-5 h-5" /> },
   { name: 'Contacts', href: '/contacts', icon: <Users className="w-5 h-5" /> },
-  { name: 'Campaigns', href: '/campaign', icon: <Megaphone className="w-5 h-5" /> },
+  { name: 'Campaigns', href: '/campaigns', icon: <Megaphone className="w-5 h-5" /> },
 ]
 
 export default function Sidebar() {
   const pathname = usePathname()
-
-  // 🧠 Hide sidebar on routes: /, /login, /signup
   const hideSidebarRoutes = ['/', '/login', '/signup']
   if (hideSidebarRoutes.includes(pathname)) return null
 
