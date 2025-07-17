@@ -17,7 +17,7 @@ export default function Sidebar() {
   if (hideSidebarRoutes.includes(pathname)) return null
 
   return (
-    <aside className="w-60 h-screen bg-zinc-50 border-r border-zinc-200 px-4 py-6 flex flex-col">
+    <aside className="w-60 h-screen bg-zinc-50 px-4 py-6 flex flex-col">
       <div className="mb-10 flex justify-center">
         <Link href="/">
           <Image

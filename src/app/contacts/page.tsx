@@ -2,9 +2,12 @@
 
 import { useEffect, useState } from 'react'
 import ContactsOverview from '@/components/contacts/ContactsOverview'
+import ContactsList from '@/components/contacts/ContactsList'
+import EditContactModal from '@/components/contacts/EditContactModal'
 
 export default function ContactsPage() {
   const [contacts, setContacts] = useState<any[]>([])
+  const [editingContact, setEditingContact] = useState<any | null>(null)
 
   useEffect(() => {
     const fetchContacts = async () => {
@@ -31,6 +34,13 @@ export default function ContactsPage() {
     )
   }).length
 
+  const handleSave = (updatedContact: any) => {
+    setContacts((prev) =>
+      prev.map((c) => (c.id === updatedContact.id ? updatedContact : c))
+    )
+    setEditingContact(null)
+  }
+
   return (
     <main className="flex min-h-screen flex-col items-start justify-start bg-zinc-50 px-4 text-zinc-800">
       <h1 className="mt-6 text-2xl font-semibold">Contacts</h1>
@@ -41,7 +51,17 @@ export default function ContactsPage() {
           totalContacts={contacts.length}
           newThisMonth={newThisMonth}
         />
+        <ContactsList contacts={contacts} onEdit={setEditingContact} />
       </div>
+
+      {editingContact && (
+        <EditContactModal
+          open={!!editingContact}
+          contact={editingContact}
+          onClose={() => setEditingContact(null)}
+          onSave={handleSave}
+        />
+      )}
     </main>
   )
 }
