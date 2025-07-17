@@ -37,7 +37,7 @@ export default function Navbar() {
         <div className="flex items-center gap-3">
           <Link href="/">
             <Image
-              src="/logo_2.png"
+              src="/logo_4.png"
               alt="Textflow Logo"
               width={40}
               height={40}

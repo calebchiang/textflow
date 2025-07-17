@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   title: "TextFlow — SMS Marketing Made Simple",
   description: "TextFlow helps small businesses grow their subscriber list and send SMS campaigns effortlessly.",
   icons: {
-    icon: "/logo_2.png", 
+    icon: "/logo_4.png", 
   },
 };
 
