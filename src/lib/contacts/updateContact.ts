@@ -5,6 +5,7 @@ interface UpdatePayload {
   first_name?: string
   last_name?: string
   phone_number?: string
+  list_id?: string
 }
 
 export async function updateContact(payload: UpdatePayload) {
@@ -20,6 +21,7 @@ export async function updateContact(payload: UpdatePayload) {
   }
 
   const { id, ...fieldsToUpdate } = payload
+
   if (Object.keys(fieldsToUpdate).length === 0) {
     throw new Error('No fields provided to update')
   }
@@ -29,7 +31,7 @@ export async function updateContact(payload: UpdatePayload) {
     .update(fieldsToUpdate)
     .eq('id', id)
     .eq('user_id', user.id)
-    .select()
+    .select('id, phone_number, first_name, last_name, created_at, list_id, lists(name)')
     .single()
 
   if (error || !data) {

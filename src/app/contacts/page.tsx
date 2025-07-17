@@ -49,7 +49,7 @@ export default function ContactsPage() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-start justify-start bg-zinc-50 px-4 text-zinc-800">
+    <main className="ml-60 flex min-h-screen flex-col items-start justify-start bg-zinc-50 px-4 text-zinc-800">
       <h1 className="mt-6 text-2xl font-semibold">Contacts</h1>
       <p className="mt-1 text-zinc-600">Manage your SMS list here.</p>
 

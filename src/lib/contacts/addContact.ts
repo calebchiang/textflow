@@ -4,6 +4,7 @@ interface AddPayload {
   first_name: string
   last_name?: string
   phone_number: string
+  list_id: string
 }
 
 export async function addContact(payload: AddPayload) {
@@ -18,9 +19,9 @@ export async function addContact(payload: AddPayload) {
     throw new Error('Unauthorized')
   }
 
-  const { first_name, last_name, phone_number } = payload
+  const { first_name, last_name, phone_number, list_id } = payload
 
-  if (!first_name || !phone_number) {
+  if (!first_name || !phone_number || !list_id) {
     throw new Error('Missing required fields')
   }
 
@@ -31,8 +32,9 @@ export async function addContact(payload: AddPayload) {
       first_name,
       last_name,
       phone_number,
+      list_id,
     })
-    .select()
+    .select('id, phone_number, first_name, last_name, created_at, lists(name)')
     .single()
 
   if (error || !data) {

@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 
-export async function getContacts() {
+export async function getLists() {
   const supabase = await createClient()
 
   const {
@@ -13,13 +13,13 @@ export async function getContacts() {
   }
 
   const { data, error } = await supabase
-    .from('contacts')
-    .select('id, phone_number, first_name, last_name, created_at, list_id, lists(name)')
+    .from('lists')
+    .select('*')
     .eq('user_id', user.id)
-    .order('created_at', { ascending: false })
+    .order('created_at', { ascending: true })
 
   if (error) {
-    throw new Error('Failed to fetch contacts')
+    throw new Error('Failed to fetch lists')
   }
 
   return data

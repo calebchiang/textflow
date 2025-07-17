@@ -16,6 +16,9 @@ interface Contact {
   first_name: string
   last_name: string
   created_at: string
+  lists?: {
+    name: string
+  } | null
 }
 
 interface ContactsListProps {
@@ -96,6 +99,7 @@ export default function ContactsList({ contacts, onEdit, onAddManual }: Contacts
             <th className="px-4 py-3 text-left text-sm font-semibold text-zinc-600">Phone Number</th>
             <th className="px-4 py-3 text-left text-sm font-semibold text-zinc-600">First Name</th>
             <th className="px-4 py-3 text-left text-sm font-semibold text-zinc-600">Last Name</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-zinc-600">List</th>
             <th className="px-4 py-3 text-left text-sm font-semibold text-zinc-600">Date Added</th>
           </tr>
         </thead>
@@ -109,6 +113,9 @@ export default function ContactsList({ contacts, onEdit, onAddManual }: Contacts
             <td className="px-4 py-3 text-sm text-zinc-800">{formatPhoneNumber(contact.phone_number)}</td>
             <td className="px-4 py-3 text-sm text-zinc-800">{contact.first_name || '-'}</td>
             <td className="px-4 py-3 text-sm text-zinc-800">{contact.last_name || '-'}</td>
+            <td className="px-4 py-3 text-sm text-zinc-800">
+              {contact.lists?.name || '-'}
+            </td>
             <td className="px-4 py-3 text-sm text-zinc-600">
                 {format(new Date(contact.created_at), 'MMM d, yyyy')}
             </td>
