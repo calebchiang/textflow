@@ -36,6 +36,20 @@ export default function ContactsList({ contacts, onEdit, onAddManual }: Contacts
   const goToPrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1))
   const goToNextPage = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages))
 
+  function formatPhoneNumber(raw: string): string {
+    const digits = raw.replace(/\D/g, '') // Remove all non-digit characters
+    if (digits.length === 11 && digits.startsWith('1')) {
+        // e.g., 1XXXXXXXXXX
+        return `+1 ${digits.slice(1, 4)} ${digits.slice(4, 7)} ${digits.slice(7)}`
+    }
+    if (digits.length === 10) {
+        // e.g., XXXYYYZZZZ
+        return `${digits.slice(0, 3)} ${digits.slice(3, 6)} ${digits.slice(6)}`
+    }
+    // fallback
+    return raw
+    }
+
   return (
     <div className="mt-6 w-full overflow-x-auto">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
@@ -92,7 +106,7 @@ export default function ContactsList({ contacts, onEdit, onAddManual }: Contacts
             onClick={() => onEdit(contact)}
             className={`cursor-pointer hover:bg-zinc-50 ${index % 2 === 1 ? 'bg-zinc-50' : ''}`}
             >
-            <td className="px-4 py-3 text-sm text-zinc-800">{contact.phone_number}</td>
+            <td className="px-4 py-3 text-sm text-zinc-800">{formatPhoneNumber(contact.phone_number)}</td>
             <td className="px-4 py-3 text-sm text-zinc-800">{contact.first_name || '-'}</td>
             <td className="px-4 py-3 text-sm text-zinc-800">{contact.last_name || '-'}</td>
             <td className="px-4 py-3 text-sm text-zinc-600">

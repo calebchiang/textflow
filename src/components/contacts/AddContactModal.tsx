@@ -36,6 +36,20 @@ export default function AddContactModal({
   const [phoneNumber, setPhoneNumber] = useState('')
   const [loading, setLoading] = useState(false)
 
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value.replace(/\D/g, '') // digits only
+    const limited = raw.slice(0, 10)
+
+    let formatted = limited
+    if (limited.length > 6) {
+      formatted = `${limited.slice(0, 3)} ${limited.slice(3, 6)} ${limited.slice(6)}`
+    } else if (limited.length > 3) {
+      formatted = `${limited.slice(0, 3)} ${limited.slice(3)}`
+    }
+
+    setPhoneNumber(formatted)
+  }
+
   const handleSubmit = async () => {
     setLoading(true)
 
@@ -45,7 +59,7 @@ export default function AddContactModal({
       body: JSON.stringify({
         first_name: firstName,
         last_name: lastName,
-        phone_number: phoneNumber,
+        phone_number: phoneNumber.replace(/\D/g, ''), // remove spaces
       }),
     })
 
@@ -90,8 +104,11 @@ export default function AddContactModal({
             <label className="text-sm font-medium text-zinc-700">Phone Number</label>
             <Input
               value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              placeholder="Required"
+              onChange={handlePhoneChange}
+              placeholder="123 456 7890"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              maxLength={12} 
             />
           </div>
         </div>
@@ -102,7 +119,7 @@ export default function AddContactModal({
           </DialogClose>
           <Button
             onClick={handleSubmit}
-            disabled={loading || !firstName || !phoneNumber}
+            disabled={loading || !firstName || phoneNumber.replace(/\D/g, '').length !== 10}
             className="bg-emerald-600 hover:bg-emerald-700"
           >
             {loading ? 'Saving...' : 'Add Contact'}

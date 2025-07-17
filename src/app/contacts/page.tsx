@@ -58,8 +58,7 @@ export default function ContactsPage() {
           totalContacts={contacts.length}
           newThisMonth={newThisMonth}
         />
-        <ContactsList contacts={contacts} onEdit={setEditingContact} onAddManual={() => setShowAddModal(true)}
-/>
+        <ContactsList contacts={contacts} onEdit={setEditingContact} onAddManual={() => setShowAddModal(true)} />
       </div>
 
       {editingContact && (

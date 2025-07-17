@@ -1,7 +1,14 @@
 'use client'
 
-import { useState } from 'react'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '@/components/ui/dialog'
+import { useState, useEffect } from 'react'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogClose,
+} from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
@@ -28,11 +35,38 @@ export default function EditContactModal({
 }: EditContactModalProps) {
   const [firstName, setFirstName] = useState(contact.first_name)
   const [lastName, setLastName] = useState(contact.last_name)
-  const [phoneNumber, setPhoneNumber] = useState(contact.phone_number)
+  const [phoneNumber, setPhoneNumber] = useState('')
   const [loading, setLoading] = useState(false)
+
+  // Format initial phone number with spaces when modal opens
+  useEffect(() => {
+    const raw = contact.phone_number.replace(/\D/g, '').slice(0, 10)
+    let formatted = raw
+    if (raw.length > 6) {
+      formatted = `${raw.slice(0, 3)} ${raw.slice(3, 6)} ${raw.slice(6)}`
+    } else if (raw.length > 3) {
+      formatted = `${raw.slice(0, 3)} ${raw.slice(3)}`
+    }
+    setPhoneNumber(formatted)
+  }, [contact.phone_number])
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value.replace(/\D/g, '')
+    const limited = raw.slice(0, 10)
+
+    let formatted = limited
+    if (limited.length > 6) {
+      formatted = `${limited.slice(0, 3)} ${limited.slice(3, 6)} ${limited.slice(6)}`
+    } else if (limited.length > 3) {
+      formatted = `${limited.slice(0, 3)} ${limited.slice(3)}`
+    }
+
+    setPhoneNumber(formatted)
+  }
 
   const handleSubmit = async () => {
     setLoading(true)
+
     const res = await fetch('/api/contacts/update', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -40,7 +74,7 @@ export default function EditContactModal({
         id: contact.id,
         first_name: firstName,
         last_name: lastName,
-        phone_number: phoneNumber,
+        phone_number: phoneNumber.replace(/\D/g, ''),
       }),
     })
 
@@ -80,7 +114,10 @@ export default function EditContactModal({
             <label className="text-sm font-medium text-zinc-700">Phone Number</label>
             <Input
               value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
+              onChange={handlePhoneChange}
+              inputMode="numeric"
+              pattern="[0-9]*"
+              maxLength={12} 
             />
           </div>
         </div>
