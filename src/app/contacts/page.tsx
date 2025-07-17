@@ -4,10 +4,12 @@ import { useEffect, useState } from 'react'
 import ContactsOverview from '@/components/contacts/ContactsOverview'
 import ContactsList from '@/components/contacts/ContactsList'
 import EditContactModal from '@/components/contacts/EditContactModal'
+import AddContactModal from '@/components/contacts/AddContactModal'
 
 export default function ContactsPage() {
   const [contacts, setContacts] = useState<any[]>([])
   const [editingContact, setEditingContact] = useState<any | null>(null)
+  const [showAddModal, setShowAddModal] = useState(false)
 
   useEffect(() => {
     const fetchContacts = async () => {
@@ -41,6 +43,11 @@ export default function ContactsPage() {
     setEditingContact(null)
   }
 
+  const handleAdd = (newContact: any) => {
+    setContacts((prev) => [newContact, ...prev])
+    setShowAddModal(false)
+  }
+
   return (
     <main className="flex min-h-screen flex-col items-start justify-start bg-zinc-50 px-4 text-zinc-800">
       <h1 className="mt-6 text-2xl font-semibold">Contacts</h1>
@@ -51,7 +58,8 @@ export default function ContactsPage() {
           totalContacts={contacts.length}
           newThisMonth={newThisMonth}
         />
-        <ContactsList contacts={contacts} onEdit={setEditingContact} />
+        <ContactsList contacts={contacts} onEdit={setEditingContact} onAddManual={() => setShowAddModal(true)}
+/>
       </div>
 
       {editingContact && (
@@ -62,6 +70,13 @@ export default function ContactsPage() {
           onSave={handleSave}
         />
       )}
+      {showAddModal && (
+      <AddContactModal
+        open={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        onSave={handleAdd}
+      />
+    )}
     </main>
   )
 }

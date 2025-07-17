@@ -2,7 +2,13 @@
 
 import { useState } from 'react'
 import { format } from 'date-fns'
-import { Plus, Filter } from 'lucide-react'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Filter, ChevronDown, UserPlus, Upload } from 'lucide-react'
 
 interface Contact {
   id: string
@@ -15,11 +21,12 @@ interface Contact {
 interface ContactsListProps {
   contacts: Contact[]
   onEdit: (contact: Contact) => void
+  onAddManual: () => void
 }
 
 const ITEMS_PER_PAGE = 20
 
-export default function ContactsList({ contacts, onEdit }: ContactsListProps) {
+export default function ContactsList({ contacts, onEdit, onAddManual }: ContactsListProps) {
   const [currentPage, setCurrentPage] = useState(1)
 
   const totalPages = Math.ceil(contacts.length / ITEMS_PER_PAGE)
@@ -39,16 +46,34 @@ export default function ContactsList({ contacts, onEdit }: ContactsListProps) {
         />
 
         <div className="flex gap-2">
-          <button className="inline-flex items-center gap-2 rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700">
-            <Plus className="h-4 w-4" />
-            Add Contact
-          </button>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                <button className="inline-flex items-center gap-2 rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700">
+                    Add Contact
+                    <ChevronDown className="h-4 w-4" />
+                </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-48">
+               <DropdownMenuItem
+                onClick={onAddManual}
+                className="flex cursor-pointer items-center gap-2"
+                >
+                <UserPlus className="h-4 w-4 text-zinc-500" />
+                Manual Add
+                </DropdownMenuItem>
+                <DropdownMenuItem className="flex items-center gap-2">
+                    <Upload className="h-4 w-4 text-zinc-500" />
+                    Import
+                </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
 
-          <button className="inline-flex items-center gap-2 rounded-md border border-zinc-300 bg-white px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-100">
-            <Filter className="h-4 w-4" />
-            Filter by
-          </button>
-        </div>
+            <button className="inline-flex items-center gap-2 rounded-md border border-zinc-300 bg-white px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-100">
+                <Filter className="h-4 w-4" />
+                Filter by
+            </button>
+            </div>
+
       </div>
 
       <table className="min-w-full divide-y divide-zinc-200 rounded-xl border border-zinc-200 bg-white">
