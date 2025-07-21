@@ -6,21 +6,37 @@ import ContactsList from '@/components/contacts/ContactsList'
 import EditContactModal from '@/components/contacts/EditContactModal'
 import AddContactModal from '@/components/contacts/AddContactModal'
 import ImportContactsModal from '@/components/contacts/ImportContactsModal'
+import ContactsListSkeleton from '@/components/contacts/ContactsListSkeleton'
 
 export default function ContactsPage() {
   const [contacts, setContacts] = useState<any[]>([])
   const [editingContact, setEditingContact] = useState<any | null>(null)
   const [showAddModal, setShowAddModal] = useState(false)
   const [showImportModal, setShowImportModal] = useState(false)
+  const [loading, setLoading] = useState(true)
+
+  const [filterType, setFilterType] = useState<'recent' | 'list'>('recent')
+  const [selectedList, setSelectedList] = useState<string | null>(null)
+  const [availableLists, setAvailableLists] = useState<string[]>([])
 
   const fetchContacts = useCallback(async () => {
     try {
       const res = await fetch('/api/contacts/get')
       const { contacts } = await res.json()
-      console.log('Fetched contacts:', contacts) // Debug log
       setContacts(contacts)
+
+      const listNames = Array.from(
+        new Set(
+          contacts
+            .map((c: any) => c.lists?.name)
+            .filter((name: string | null) => !!name)
+        )
+      )
+      setAvailableLists(listNames as string[])
     } catch (err) {
       console.error('Error fetching contacts:', err)
+    } finally {
+      setLoading(false)
     }
   }, [])
 
@@ -33,7 +49,6 @@ export default function ContactsPage() {
   const currentYear = now.getFullYear()
 
   const newThisMonth = contacts.filter((c) => {
-    // Ensure created_at exists before parsing
     if (!c.created_at) return false
     const created = new Date(c.created_at)
     return (
@@ -54,21 +69,18 @@ export default function ContactsPage() {
   }
 
   const handleImport = async (newContacts: any[]) => {
-    console.log('Handling imported contacts:', newContacts) // Debug log
-    
-    // Ensure all imported contacts have created_at if missing
     const contactsWithDates = newContacts.map(contact => ({
       ...contact,
       created_at: contact.created_at || new Date().toISOString()
     }))
-    
-    // Update the state with the new contacts
     setContacts((prev) => [...contactsWithDates, ...prev])
     setShowImportModal(false)
-    
-    // Optionally, refetch all contacts to ensure consistency
-    // setTimeout(fetchContacts, 500)
   }
+
+  const filteredContacts =
+    filterType === 'list' && selectedList
+      ? contacts.filter((c) => c.lists?.name === selectedList)
+      : contacts
 
   return (
     <main className="ml-60 flex min-h-screen flex-col items-start justify-start bg-zinc-50 px-4 text-zinc-800">
@@ -80,12 +92,21 @@ export default function ContactsPage() {
           totalContacts={contacts.length}
           newThisMonth={newThisMonth}
         />
-        <ContactsList
-          contacts={contacts}
-          onEdit={setEditingContact}
-          onAddManual={() => setShowAddModal(true)}
-          onImport={() => setShowImportModal(true)} 
-        />      
+        {loading ? (
+          <ContactsListSkeleton />
+        ) : (
+          <ContactsList
+            contacts={filteredContacts}
+            onEdit={setEditingContact}
+            onAddManual={() => setShowAddModal(true)}
+            onImport={() => setShowImportModal(true)}
+            filterType={filterType}
+            setFilterType={setFilterType}
+            selectedList={selectedList}
+            setSelectedList={setSelectedList}
+            availableLists={availableLists}
+          />
+        )}
       </div>
 
       {editingContact && (
@@ -96,7 +117,7 @@ export default function ContactsPage() {
           onSave={handleSave}
         />
       )}
-      
+
       {showAddModal && (
         <AddContactModal
           open={showAddModal}
@@ -104,7 +125,7 @@ export default function ContactsPage() {
           onSave={handleAdd}
         />
       )}
-      
+
       {showImportModal && (
         <ImportContactsModal
           open={showImportModal}

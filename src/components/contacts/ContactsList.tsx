@@ -8,7 +8,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Filter, ChevronDown, UserPlus, Upload } from 'lucide-react'
+import {
+  Filter,
+  ChevronDown,
+  ChevronUp,
+  UserPlus,
+  Upload,
+  Check,
+} from 'lucide-react'
 
 interface Contact {
   id: string
@@ -25,23 +32,45 @@ interface ContactsListProps {
   contacts: Contact[]
   onEdit: (contact: Contact) => void
   onAddManual: () => void
-  onImport: () => void 
+  onImport: () => void
+  filterType: 'recent' | 'list'
+  setFilterType: (type: 'recent' | 'list') => void
+  selectedList: string | null
+  setSelectedList: (name: string | null) => void
+  availableLists: string[]
 }
 
 const ITEMS_PER_PAGE = 20
 
-export default function ContactsList({ contacts, onEdit, onAddManual, onImport }: ContactsListProps) {
+export default function ContactsList({
+  contacts,
+  onEdit,
+  onAddManual,
+  onImport,
+  filterType,
+  setFilterType,
+  selectedList,
+  setSelectedList,
+  availableLists,
+}: ContactsListProps) {
   const [currentPage, setCurrentPage] = useState(1)
   const [searchTerm, setSearchTerm] = useState('')
+  const [showListOptions, setShowListOptions] = useState(false)
 
   const filteredContacts = contacts.filter((c) => {
     const fullName = `${c.first_name ?? ''} ${c.last_name ?? ''}`.toLowerCase()
     return fullName.includes(searchTerm.toLowerCase())
   })
 
-  const totalPages = Math.max(1, Math.ceil(filteredContacts.length / ITEMS_PER_PAGE))
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredContacts.length / ITEMS_PER_PAGE)
+  )
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
-  const paginatedContacts = filteredContacts.slice(startIndex, startIndex + ITEMS_PER_PAGE)
+  const paginatedContacts = filteredContacts.slice(
+    startIndex,
+    startIndex + ITEMS_PER_PAGE
+  )
 
   const goToPrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1))
   const goToNextPage = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages))
@@ -87,20 +116,81 @@ export default function ContactsList({ contacts, onEdit, onAddManual, onImport }
                 <UserPlus className="h-4 w-4 text-zinc-500" />
                 Manual Add
               </DropdownMenuItem>
-             <DropdownMenuItem
-              onClick={onImport}
-              className="flex cursor-pointer items-center gap-2"
-            >
-              <Upload className="h-4 w-4 text-zinc-500" />
-              Import
-            </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={onImport}
+                className="flex cursor-pointer items-center gap-2"
+              >
+                <Upload className="h-4 w-4 text-zinc-500" />
+                Import
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <button className="inline-flex items-center gap-2 rounded-md border border-zinc-300 bg-white px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-100">
-            <Filter className="h-4 w-4" />
-            Filter by
-          </button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="inline-flex items-center gap-2 rounded-md border border-zinc-300 bg-white px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-100">
+                <Filter className="h-4 w-4" />
+                Filter by
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-64 max-h-96 overflow-auto">
+              <DropdownMenuItem
+                onClick={() => {
+                  setFilterType('recent')
+                  setSelectedList(null)
+                  setShowListOptions(false)
+                }}
+                className="flex cursor-pointer items-center justify-between"
+              >
+                <span className="flex items-center gap-2">
+                  {filterType === 'recent' && (
+                    <Check className="h-4 w-4 text-emerald-600" />
+                  )}
+                  Most Recently Added
+                </span>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                onSelect={(event) => {
+                  event.preventDefault() // Prevent the dropdown from closing
+                  setFilterType('list')
+                  setShowListOptions((prev) => !prev)
+                }}
+                className="flex cursor-pointer items-center justify-between"
+              >
+                <span className="flex items-center gap-2">
+                  {filterType === 'list' && (
+                    <Check className="h-4 w-4 text-emerald-600" />
+                  )}
+                  By List
+                </span>
+                {showListOptions ? (
+                  <ChevronUp className="h-4 w-4 text-zinc-500" />
+                ) : (
+                  <ChevronDown className="h-4 w-4 text-zinc-500" />
+                )}
+              </DropdownMenuItem>
+
+              {filterType === 'list' && showListOptions && (
+                <div className="pl-6 max-h-40 overflow-y-auto transition-all">
+                  {availableLists.map((list) => (
+                    <DropdownMenuItem
+                      key={list}
+                      onClick={() => setSelectedList(list)}
+                      className="pl-4 flex cursor-pointer items-center justify-between text-sm"
+                    >
+                      <span className="flex items-center gap-2 before:content-['•'] before:text-zinc-400 before:mr-1">
+                        {selectedList === list && (
+                          <Check className="h-4 w-4 text-emerald-600" />
+                        )}
+                        {list}
+                      </span>
+                    </DropdownMenuItem>
+                  ))}
+                </div>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
@@ -119,14 +209,22 @@ export default function ContactsList({ contacts, onEdit, onAddManual, onImport }
             <tr
               key={contact.id}
               onClick={() => onEdit(contact)}
-              className={`cursor-pointer hover:bg-zinc-50 ${index % 2 === 1 ? 'bg-zinc-50' : ''}`}
+              className={`cursor-pointer hover:bg-zinc-50 ${
+                index % 2 === 1 ? 'bg-zinc-50' : ''
+              }`}
             >
               <td className="px-4 py-3 text-sm text-zinc-800">
                 {formatPhoneNumber(contact.phone_number)}
               </td>
-              <td className="px-4 py-3 text-sm text-zinc-800">{contact.first_name || '-'}</td>
-              <td className="px-4 py-3 text-sm text-zinc-800">{contact.last_name || '-'}</td>
-              <td className="px-4 py-3 text-sm text-zinc-800">{contact.lists?.name || '-'}</td>
+              <td className="px-4 py-3 text-sm text-zinc-800">
+                {contact.first_name || '-'}
+              </td>
+              <td className="px-4 py-3 text-sm text-zinc-800">
+                {contact.last_name || '-'}
+              </td>
+              <td className="px-4 py-3 text-sm text-zinc-800">
+                {contact.lists?.name || '-'}
+              </td>
               <td className="px-4 py-3 text-sm text-zinc-600">
                 {format(new Date(contact.created_at), 'MMM d, yyyy')}
               </td>
