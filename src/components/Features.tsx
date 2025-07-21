@@ -8,19 +8,19 @@ const features = [
     Icon: Rocket,
     name: 'Campaign Blasts',
     description: 'Send promotional messages to your entire list with one click.',
-    className: 'col-span-3 lg:col-span-2', // spans 2/3 of row on large screens
+    className: 'col-span-3 lg:col-span-2', 
   },
   {
     Icon: Bot,
     name: 'Automated Flows',
     description: 'Set up drip sequences, welcome texts, and follow-ups on autopilot.',
-    className: 'col-span-3 lg:col-span-1', // remaining 1/3
+    className: 'col-span-3 lg:col-span-1', 
   },
   {
     Icon: MessageSquare,
     name: 'Two-Way Chat',
     description: 'Talk with leads and customers in a single, unified inbox.',
-    className: 'col-span-3 lg:col-span-2', // full row on small, 2/3 on large
+    className: 'col-span-3 lg:col-span-2',
   },
   {
     Icon: Users,
@@ -41,16 +41,17 @@ export default function Features() {
        <BentoGrid>
         {features.map((feature, index) => (
             <BentoCard
-            key={index}
-            name={feature.name}
-            description={feature.description}
-            Icon={feature.Icon}
-            cta="Learn More"
-            className={feature.className}
+              key={index}
+              name={feature.name}
+              description={feature.description}
+              Icon={feature.Icon}
+              cta="Learn More"
+              className={feature.className}
+              background="bg-emerald-100"
+              href="#"
             />
         ))}
         </BentoGrid>
-
       </div>
     </section>
   )

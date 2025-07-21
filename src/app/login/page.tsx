@@ -1,12 +1,12 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 
-export default function LoginPage() {
+function LoginContent() {
   const supabase = createClient()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -48,9 +48,9 @@ export default function LoginPage() {
         <h1 className="text-2xl font-bold text-zinc-800 mb-6 text-center">Log in to TextFlow</h1>
 
         {showVerifyMsg && (
-        <div className="bg-emerald-100 border border-emerald-200 text-emerald-800 rounded-md px-4 py-3 text-sm mb-4">
+          <div className="bg-emerald-100 border border-emerald-200 text-emerald-800 rounded-md px-4 py-3 text-sm mb-4">
             ✅ Check your email to verify your account before logging in.
-        </div>
+          </div>
         )}
 
         <button className="w-full flex items-center justify-center gap-3 border border-zinc-300 rounded-md py-2 mb-6 hover:bg-zinc-100 transition">
@@ -103,5 +103,13 @@ export default function LoginPage() {
         </p>
       </div>
     </main>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginContent />
+    </Suspense>
   )
 }

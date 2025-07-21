@@ -25,11 +25,12 @@ interface ContactsListProps {
   contacts: Contact[]
   onEdit: (contact: Contact) => void
   onAddManual: () => void
+  onImport: () => void 
 }
 
 const ITEMS_PER_PAGE = 20
 
-export default function ContactsList({ contacts, onEdit, onAddManual }: ContactsListProps) {
+export default function ContactsList({ contacts, onEdit, onAddManual, onImport }: ContactsListProps) {
   const [currentPage, setCurrentPage] = useState(1)
   const [searchTerm, setSearchTerm] = useState('')
 
@@ -86,10 +87,13 @@ export default function ContactsList({ contacts, onEdit, onAddManual }: Contacts
                 <UserPlus className="h-4 w-4 text-zinc-500" />
                 Manual Add
               </DropdownMenuItem>
-              <DropdownMenuItem className="flex items-center gap-2">
-                <Upload className="h-4 w-4 text-zinc-500" />
-                Import
-              </DropdownMenuItem>
+             <DropdownMenuItem
+              onClick={onImport}
+              className="flex cursor-pointer items-center gap-2"
+            >
+              <Upload className="h-4 w-4 text-zinc-500" />
+              Import
+            </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
