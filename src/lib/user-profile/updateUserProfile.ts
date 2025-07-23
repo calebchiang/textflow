@@ -26,7 +26,10 @@ export async function updateUserProfile(body: any) {
     email,
   } = body
 
-  const updateData: any = { country }
+  const updateData: any = {
+    country,
+    onboarding_complete: true, 
+  }
 
   if (country !== 'canada') {
     Object.assign(updateData, {
@@ -40,7 +43,6 @@ export async function updateUserProfile(body: any) {
       zip,
       phone,
       email,
-      onboarding_complete: true,
     })
   }
 
