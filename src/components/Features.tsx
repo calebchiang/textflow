@@ -13,6 +13,10 @@ import {
   BarChart3,
 } from 'lucide-react'
 
+import { motion } from 'framer-motion'
+import { useRef } from 'react'
+import { useInView } from 'framer-motion'
+
 export default function Features() {
   const features = [
     {
@@ -96,45 +100,64 @@ export default function Features() {
     <section className="bg-white py-20 px-6">
       <div className="max-w-6xl mx-auto space-y-32">
         {features.map((feature) => (
-          <div
-            key={feature.id}
-            className={`flex flex-col-reverse md:flex-row ${
-              feature.reversed ? 'md:flex-row-reverse' : ''
-            } items-center gap-12`}
-          >
-            <div className="w-full md:w-1/2">
-              <Image
-                src={feature.image}
-                alt={feature.title}
-                width={1000}
-                height={1000}
-                className="w-full h-auto"
-              />
-            </div>
-
-            <div className="w-full md:w-1/2">
-              <h2 className="text-3xl font-bold text-zinc-900 mb-4">
-                {feature.title}
-              </h2>
-              <p className="text-zinc-600 mb-6">{feature.description}</p>
-              <ul className="space-y-4">
-                {feature.bullets.map((b, idx) => {
-                  const Icon = b.icon
-                  return (
-                    <li key={idx} className="flex items-start gap-4">
-                      <Icon className="w-5 h-5 text-emerald-600 mt-1" />
-                      <div>
-                        <p className="font-semibold text-zinc-800">{b.label}</p>
-                        <p className="text-zinc-500 text-sm">{b.desc}</p>
-                      </div>
-                    </li>
-                  )
-                })}
-              </ul>
-            </div>
-          </div>
+          <FeatureBlock key={feature.id} feature={feature} />
         ))}
       </div>
     </section>
+  )
+}
+
+function FeatureBlock({ feature }: { feature: any }) {
+  const ref = useRef(null)
+  const isInView = useInView(ref, { once: true, margin: '-100px' })
+
+  return (
+    <div
+      className={`flex flex-col-reverse md:flex-row ${
+        feature.reversed ? 'md:flex-row-reverse' : ''
+      } items-center gap-12`}
+    >
+      <div className="w-full md:w-1/2">
+        <Image
+          src={feature.image}
+          alt={feature.title}
+          width={1000}
+          height={1000}
+          className="w-full h-auto"
+        />
+      </div>
+
+      <div className="w-full md:w-1/2">
+        <h2 className="text-3xl font-bold text-zinc-900 mb-4">
+          {feature.title}
+        </h2>
+        <p className="text-zinc-600 mb-6">{feature.description}</p>
+
+        <ul className="space-y-4" ref={ref}>
+          {feature.bullets.map((b: any, idx: number) => {
+            const Icon = b.icon
+            return (
+              <motion.li
+                key={idx}
+                initial={{ opacity: 0, y: 20 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{
+                  delay: idx * 0.15,
+                  duration: 0.5,
+                  ease: 'easeOut',
+                }}
+                className="flex items-start gap-4"
+              >
+                <Icon className="w-5 h-5 text-emerald-600 mt-1" />
+                <div>
+                  <p className="font-semibold text-zinc-800">{b.label}</p>
+                  <p className="text-zinc-500 text-sm">{b.desc}</p>
+                </div>
+              </motion.li>
+            )
+          })}
+        </ul>
+      </div>
+    </div>
   )
 }

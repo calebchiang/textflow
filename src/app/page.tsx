@@ -2,6 +2,8 @@ import Hero from "@/components/Hero";
 import Benefits from "@/components/Benefits";
 import Features from "@/components/Features";
 import SocialProof from "@/components/SocialProof";
+import AudienceComparison from "@/components/AudienceComparison";
+import CTA from "@/components/CTA";
 
 export default function Home() {
   return (
@@ -9,8 +11,8 @@ export default function Home() {
       <Hero />
       <SocialProof />
            <Features />
-      <Benefits />
- 
+           <AudienceComparison /> 
+           <CTA />
     </main>
   )
 }
