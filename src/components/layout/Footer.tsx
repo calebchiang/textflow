@@ -10,7 +10,7 @@ export default function Footer() {
   if (pathname !== '/') return null
 
   return (
-    <footer className="w-full bg-zinc-50 border-t border-zinc-200 py-8 px-4 mt-12">
+    <footer className="w-full bg-zinc-50 border-t border-zinc-200 py-8 px-4">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
         <div className="flex items-start gap-3 text-zinc-800">
           <Image

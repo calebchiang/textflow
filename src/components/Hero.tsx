@@ -8,7 +8,6 @@ import { AuroraText } from '@/components/magicui/aurora-text'
 export default function Hero() {
   return (
     <section className="relative bg-zinc-50 py-8 overflow-hidden">
-      {/* Grid background */}
       <div
         className="absolute inset-0"
         style={{
@@ -22,7 +21,6 @@ export default function Hero() {
         }}
       />
 
-      {/* Radial fade */}
       <div
         className="absolute inset-0"
         style={{
@@ -32,7 +30,6 @@ export default function Hero() {
       />
 
       <div className="relative z-10 max-w-6xl mx-auto px-6 flex flex-col-reverse md:flex-row items-center justify-between gap-16">
-        {/* Left side text */}
         <div className="text-center md:text-left md:w-1/2">
           <h1 className="text-5xl font-bold text-zinc-900">
             Grow Your SMS List.<br className="hidden md:block" />
@@ -59,7 +56,6 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Right side images */}
         <div className="md:w-1/2 flex justify-center -space-x-12">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

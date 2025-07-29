@@ -17,6 +17,8 @@ import { motion } from 'framer-motion'
 import { useRef } from 'react'
 import { useInView } from 'framer-motion'
 
+import { DotPattern } from '@/components/magicui/dot-pattern'
+
 export default function Features() {
   const features = [
     {
@@ -97,8 +99,11 @@ export default function Features() {
   ]
 
   return (
-    <section className="bg-white py-20 px-6">
-      <div className="max-w-6xl mx-auto space-y-32">
+    <section className="relative bg-white py-20 px-6 overflow-hidden">
+      {/* Dot background */}
+      <DotPattern className="absolute inset-0 z-0 opacity-20" />
+
+      <div className="relative z-10 max-w-6xl mx-auto space-y-32">
         {features.map((feature) => (
           <FeatureBlock key={feature.id} feature={feature} />
         ))}

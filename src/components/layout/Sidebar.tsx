@@ -2,11 +2,12 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { LayoutDashboard, Users, Megaphone } from 'lucide-react'
+import { LayoutDashboard, Users, Megaphone, MessageCircle } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 
 const navItems = [
   { name: 'Dashboard', href: '/dashboard', icon: <LayoutDashboard className="w-5 h-5" /> },
+  { name: 'Inbox', href: '/inbox', icon: <MessageCircle className="w-5 h-5" /> },
   { name: 'Contacts', href: '/contacts', icon: <Users className="w-5 h-5" /> },
   { name: 'Campaigns', href: '/campaigns', icon: <Megaphone className="w-5 h-5" /> },
 ]
@@ -51,9 +52,7 @@ export default function Sidebar() {
         </nav>
       </div>
 
-      {/* Bottom section: placeholder for future buttons (e.g., settings/logout) */}
       <div className="p-6 border-t border-zinc-200 text-sm text-zinc-500">
-        {/* Future: Add settings/logout/help buttons here */}
         <p className="text-xs text-zinc-400">TextFlow © 2025</p>
       </div>
     </aside>

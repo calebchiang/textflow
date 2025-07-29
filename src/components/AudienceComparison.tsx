@@ -26,7 +26,7 @@ export default function AudienceComparison() {
               </div>
               <div className="flex items-start gap-3">
                 <XCircle className="text-red-500 w-5 h-5 mt-1" />
-                <p className="text-sm text-zinc-700">Complete reliance on algorithm that determines who sees your content</p>
+                <p className="text-sm text-zinc-700">Complete reliance on algorithms that determine who see your content</p>
               </div>
               <div className="flex items-start gap-3">
                 <XCircle className="text-red-500 w-5 h-5 mt-1" />
