@@ -4,23 +4,12 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { AuroraText } from '@/components/magicui/aurora-text'
+import { DotPattern } from '@/components/magicui/dot-pattern'
 
 export default function Hero() {
   return (
-    <section className="relative bg-zinc-50 py-8 overflow-hidden">
-      <div
-        className="absolute inset-0"
-        style={{
-          backgroundImage: `
-            linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px)
-          `,
-          backgroundSize: '32px 32px',
-          backgroundPosition: '-1px -1px',
-          zIndex: 0,
-        }}
-      />
-
+    <section className="relative bg-zinc-50 py-20 overflow-hidden">
+      <DotPattern className="absolute inset-0 z-0 opacity-30" />
       <div
         className="absolute inset-0"
         style={{
@@ -31,7 +20,7 @@ export default function Hero() {
 
       <div className="relative z-10 max-w-6xl mx-auto px-6 flex flex-col-reverse md:flex-row items-center justify-between gap-16">
         <div className="text-center md:text-left md:w-1/2">
-          <h1 className="text-5xl font-bold text-zinc-900">
+          <h1 className="text-5xl font-bold text-zinc-900 leading-tight">
             Grow Your SMS List.<br className="hidden md:block" />
             Drive <AuroraText className="inline-block">More Sales</AuroraText>.
           </h1>

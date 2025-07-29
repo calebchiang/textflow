@@ -11,7 +11,7 @@ export default function CTA() {
         className="absolute inset-0 z-0"
         angle={65}
         cellSize={60}
-        opacity={0.9}
+        opacity={0.7}
         lightLineColor="#d4d4d8" 
         darkLineColor="#d4d4d8"
       />
