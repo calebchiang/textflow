@@ -4,20 +4,10 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { AuroraText } from '@/components/magicui/aurora-text'
-import { DotPattern } from '@/components/magicui/dot-pattern'
 
 export default function Hero() {
   return (
     <section className="relative bg-zinc-50 py-20 overflow-hidden">
-      <DotPattern className="absolute inset-0 z-0 opacity-30" />
-      <div
-        className="absolute inset-0"
-        style={{
-          background: `radial-gradient(circle at 50% 50%, transparent 0%, rgba(250, 250, 250, 0.5) 70%, rgba(250, 250, 250, 0.9) 100%)`,
-          zIndex: 1,
-        }}
-      />
-
       <div className="relative z-10 max-w-6xl mx-auto px-6 flex flex-col-reverse md:flex-row items-center justify-between gap-16">
         <div className="text-center md:text-left md:w-1/2">
           <h1 className="text-5xl font-bold text-zinc-900 leading-tight">
@@ -45,7 +35,18 @@ export default function Hero() {
           </div>
         </div>
 
-        <div className="md:w-1/2 flex justify-center -space-x-12">
+        <div className="md:w-1/2 relative flex justify-center -space-x-12">
+          {/* Darker and more vivid gradient blob background */}
+          <div
+            className="absolute inset-0 -z-10 blur-2xl opacity-70"
+            style={{
+              background: `
+                radial-gradient(circle at 30% 30%, #f87171, transparent 60%),
+                radial-gradient(circle at 70% 70%, #60a5fa, transparent 60%)
+              `
+            }}
+          />
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
