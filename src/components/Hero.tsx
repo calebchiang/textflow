@@ -36,7 +36,6 @@ export default function Hero() {
         </div>
 
         <div className="md:w-1/2 relative flex justify-center -space-x-12">
-          {/* Darker and more vivid gradient blob background */}
           <div
             className="absolute inset-0 -z-10 blur-2xl opacity-70"
             style={{

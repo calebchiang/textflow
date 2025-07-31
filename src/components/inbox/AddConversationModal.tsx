@@ -21,20 +21,23 @@ interface Contact {
 interface AddConversationModalProps {
   open: boolean
   onClose: () => void
+  onNewConversation: (convo: any) => void
 }
 
-const existingConversations = ['123', '456'] 
-
-export default function AddConversationModal({ open, onClose }: AddConversationModalProps) {
+export default function AddConversationModal({
+  open,
+  onClose,
+  onNewConversation,
+}: AddConversationModalProps) {
   const [contacts, setContacts] = useState<Contact[]>([])
   const [recipient, setRecipient] = useState('')
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null)
   const [step, setStep] = useState<1 | 2>(1)
   const [message, setMessage] = useState('')
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (!open) return
-
     setStep(1)
     setRecipient('')
     setSelectedContact(null)
@@ -49,6 +52,7 @@ export default function AddConversationModal({ open, onClose }: AddConversationM
         console.error('Error fetching contacts:', err)
       }
     }
+
     fetchContacts()
   }, [open])
 
@@ -64,20 +68,46 @@ export default function AddConversationModal({ open, onClose }: AddConversationM
     : []
 
   const handleSelect = (contact: Contact) => {
-    const exists = existingConversations.includes(contact.id)
-
-    if (exists) {
-      onClose()
-    } else {
-      setSelectedContact(contact)
-      setStep(2)
-    }
+    setSelectedContact(contact)
+    setStep(2)
   }
 
-  const handleSend = () => {
-    if (!message.trim()) return
-    console.log('Sending message:', message)
-    onClose()
+  const handleSend = async () => {
+    if (!message.trim() || !selectedContact) return
+
+    try {
+      setLoading(true)
+      const res = await fetch('/api/conversations/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contact_id: selectedContact.id,
+          message,
+        }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        console.error('Failed to send message:', data.error || 'Unknown error')
+        return
+      }
+
+      // Build contact object into returned conversation for UI update
+      const newConvo = {
+        id: data.conversation_id,
+        contact_id: selectedContact.id,
+        created_at: new Date().toISOString(),
+        contacts: selectedContact,
+      }
+
+      onNewConversation(newConvo)
+      onClose()
+    } catch (err) {
+      console.error('Error sending message:', err)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -130,8 +160,9 @@ export default function AddConversationModal({ open, onClose }: AddConversationM
             <p className="text-sm text-zinc-600">
               To:{' '}
               <span className="font-medium">
-                {[selectedContact.first_name, selectedContact.last_name].filter(Boolean).join(' ') ||
-                  selectedContact.phone_number}
+                {[selectedContact.first_name, selectedContact.last_name]
+                  .filter(Boolean)
+                  .join(' ') || selectedContact.phone_number}
               </span>
             </p>
             <Input
@@ -139,8 +170,12 @@ export default function AddConversationModal({ open, onClose }: AddConversationM
               value={message}
               onChange={(e) => setMessage(e.target.value)}
             />
-            <Button onClick={handleSend} className="bg-emerald-600 hover:bg-emerald-700">
-              Send
+            <Button
+              onClick={handleSend}
+              disabled={loading || !message.trim()}
+              className="bg-emerald-600 hover:bg-emerald-700"
+            >
+              {loading ? 'Sending...' : 'Send'}
             </Button>
           </div>
         )}
