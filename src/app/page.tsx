@@ -4,15 +4,17 @@ import Features from "@/components/Features";
 import SocialProof from "@/components/SocialProof";
 import AudienceComparison from "@/components/AudienceComparison";
 import CTA from "@/components/CTA";
+import Pricing from "@/components/Pricing";
 
 export default function Home() {
   return (
     <main className="min-h-screen ">
       <Hero />
       <SocialProof />
-           <Features />
-           <AudienceComparison /> 
-           <CTA />
+      <Features />
+      <Pricing />
+      <AudienceComparison /> 
+      <CTA />
     </main>
   )
 }

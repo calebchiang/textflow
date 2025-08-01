@@ -6,6 +6,14 @@ interface SendPayload {
   content: string
 }
 
+type Conversation = {
+  id: string
+  contact_id: string
+  contacts: {
+    phone_number: string
+  } | null
+}
+
 export async function sendMessage({ conversationId, content }: SendPayload) {
   const supabase = await createClient()
 
@@ -28,7 +36,7 @@ export async function sendMessage({ conversationId, content }: SendPayload) {
     .select('id, contact_id, contacts ( phone_number )')
     .eq('id', conversationId)
     .eq('user_id', user.id)
-    .single()
+    .single<Conversation>() 
 
   if (convoError || !conversation) {
     throw new Error('Conversation not found')

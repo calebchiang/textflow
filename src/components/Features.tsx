@@ -118,6 +118,7 @@ function FeatureBlock({ feature }: { feature: any }) {
 
   return (
     <div
+    id="features"
       className={`flex flex-col-reverse md:flex-row ${
         feature.reversed ? 'md:flex-row-reverse' : ''
       } items-center gap-12`}

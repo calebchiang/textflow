@@ -6,12 +6,14 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
+import { Menu, X } from 'lucide-react'
 
 export default function Navbar() {
   const pathname = usePathname()
   const supabase = createClient()
 
   const [user, setUser] = useState<User | null>(null)
+  const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
     const getUser = async () => {
@@ -31,8 +33,47 @@ export default function Navbar() {
   const shouldHide = hideNavbarRoutes.includes(pathname)
   if (shouldHide) return null
 
+  const navLinks = (
+    <>
+      {pathname === '/' && (
+        <>
+          <a href="#features" className="hover:text-emerald-600 transition-colors">
+            Features
+          </a>
+          <a href="#pricing" className="hover:text-emerald-600 transition-colors">
+            Pricing
+          </a>
+        </>
+      )}
+
+      {user ? (
+        <Link
+          href="/dashboard"
+          className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-md transition"
+        >
+          Dashboard
+        </Link>
+      ) : (
+        <>
+          <Link
+            href="/login"
+            className="hover:text-emerald-600 transition-colors"
+          >
+            Login
+          </Link>
+          <Link
+            href="/signup"
+            className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-md transition"
+          >
+            Sign Up
+          </Link>
+        </>
+      )}
+    </>
+  )
+
   return (
-    <header className="w-full bg-zinc-50 px-6 py-4">
+    <header className="sticky top-0 z-50 w-full bg-zinc-50 px-6 py-4">
       <div className="max-w-6xl mx-auto flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Link href="/">
@@ -47,31 +88,29 @@ export default function Navbar() {
           <span className="text-lg font-bold text-zinc-800">TextFlow</span>
         </div>
 
-        <nav className="flex items-center gap-4 text-sm font-medium text-zinc-700">
-          {user ? (
-            <Link
-              href="/dashboard"
-              className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-md transition"
-            >
-              Dashboard
-            </Link>
-          ) : (
-            <>
-              <Link
-                href="/login"
-                className="hover:text-emerald-600 transition-colors"
-              >
-                Login
-              </Link>
-              <Link
-                href="/signup"
-                className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-md transition"
-              >
-                Sign Up
-              </Link>
-            </>
-          )}
-        </nav>
+        <div className="hidden md:flex items-center gap-6 text-sm font-medium text-zinc-700">
+          {navLinks}
+        </div>
+
+        <div className="md:hidden">
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="text-zinc-800 hover:text-emerald-600 transition-colors"
+            aria-label="Toggle menu"
+          >
+            {menuOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
+        </div>
+      </div>
+
+      <div
+        className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
+          menuOpen ? 'max-h-[500px] pb-4' : 'max-h-0'
+        }`}
+      >
+        <div className="flex flex-col space-y-2 pt-4 text-sm font-medium text-zinc-700">
+          {navLinks}
+        </div>
       </div>
     </header>
   )

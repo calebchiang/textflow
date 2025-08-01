@@ -5,10 +5,21 @@ import ConversationsList from '@/components/inbox/ConversationsList'
 import ConversationView from '@/components/inbox/ConversationView'
 import AddConversationModal from '@/components/inbox/AddConversationModal'
 
+type Conversation = {
+  id: string
+  contact_id: string
+  created_at: string
+  contacts: {
+    first_name: string | null
+    last_name: string | null
+    phone_number: string
+  }
+}
+
 export default function InboxPage() {
   const [showAddModal, setShowAddModal] = useState(false)
-  const [conversations, setConversations] = useState([])
-  const [selectedConversation, setSelectedConversation] = useState(null)
+  const [conversations, setConversations] = useState<Conversation[]>([]) // <-- EXPLICIT TYPE HERE
+  const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {

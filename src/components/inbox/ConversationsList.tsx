@@ -17,7 +17,7 @@ type Conversation = {
 
 interface Props {
   conversations: Conversation[]
-  setConversations: (fn: (prev: Conversation[]) => Conversation[]) => void
+  setConversations: React.Dispatch<React.SetStateAction<Conversation[]>>
   onStartNewConversation: () => void
   onSelectConversation: (conv: Conversation) => void
   selectedConversation: Conversation | null
