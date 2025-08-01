@@ -16,9 +16,7 @@ export default function Hero() {
           </h1>
 
           <p className="mt-4 text-lg text-zinc-600">
-            TextFlow helps businesses build their SMS list, send bulk campaigns, and automate growth.
-          </p>
-
+        Forget monthly subscriptions. Grow your SMS list and only pay per message sent.</p>
           <div className="mt-8 flex flex-col sm:flex-row sm:justify-start justify-center gap-4">
             <Link
               href="/signup"
