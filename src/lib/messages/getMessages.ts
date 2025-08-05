@@ -13,9 +13,6 @@ export async function getMessages(conversationId: string) {
     throw new Error('Unauthorized')
   }
 
-  console.log('Fetching messages for conversationId:', conversationId)
-  console.log('Authenticated user ID:', user.id)
-
   const { data, error } = await supabase
     .from('messages')
     .select('id, conversation_id, sender_id, content, created_at')
@@ -27,7 +24,5 @@ export async function getMessages(conversationId: string) {
     console.error('conversationId sent:', conversationId)
     throw new Error('Failed to fetch messages')
   }
-
-  console.log('Messages fetched successfully:', data?.length)
   return { messages: data, userId: user.id }
 }

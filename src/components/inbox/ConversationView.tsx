@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { MessageCircle, Send } from 'lucide-react'
 import clsx from 'clsx'
 
@@ -10,6 +10,8 @@ export default function ConversationView({ conversation }: { conversation: any }
   const [loading, setLoading] = useState(false)
   const [newMessage, setNewMessage] = useState('')
   const [sending, setSending] = useState(false)
+
+  const messagesContainerRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -35,6 +37,12 @@ export default function ConversationView({ conversation }: { conversation: any }
 
     fetchMessages()
   }, [conversation])
+
+  useEffect(() => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight
+    }
+  }, [messages])
 
   const handleSend = async () => {
     if (!newMessage.trim() || !conversation) return
@@ -78,6 +86,14 @@ export default function ConversationView({ conversation }: { conversation: any }
     }).format(date)
   }
 
+  const formatDateHeader = (timestamp: string) => {
+    const date = new Date(timestamp)
+    return new Intl.DateTimeFormat('en-US', {
+      day: 'numeric',
+      month: 'long',
+    }).format(date)
+  }
+
   if (!conversation) {
     return (
       <div className="h-full bg-white flex flex-col items-center justify-center text-zinc-500 animate-fadeIn">
@@ -101,7 +117,7 @@ export default function ConversationView({ conversation }: { conversation: any }
           right: -14px;
           width: 30px;
           height: 22px;
-          background: #3b82f6;
+          background: #22c55e;
           border-bottom-left-radius: 22px 20px;
         }
         .message-sent::after {
@@ -141,7 +157,6 @@ export default function ConversationView({ conversation }: { conversation: any }
       `}</style>
 
       <div className="h-full flex flex-col bg-white animate-fadeIn">
-        {/* Header */}
         <div className="px-6 py-4 border-b border-zinc-200">
           <p className="text-md font-semibold">{name}</p>
           {conversation.contacts?.phone_number && (
@@ -149,7 +164,10 @@ export default function ConversationView({ conversation }: { conversation: any }
           )}
         </div>
 
-        <div className="flex-1 overflow-y-auto px-4 py-4 space-y-2">
+        <div
+          ref={messagesContainerRef}
+          className="flex-1 overflow-y-auto px-4 py-4 space-y-2"
+        >
           {loading ? (
             Array.from({ length: 6 }).map((_, i) => (
               <div
@@ -163,34 +181,47 @@ export default function ConversationView({ conversation }: { conversation: any }
               </div>
             ))
           ) : (
-            messages.map((msg) => {
-              const isUser = msg.sender_id === userId
-              return (
-                <div
-                  key={msg.id}
-                  className={clsx('flex w-full', isUser ? 'justify-end' : 'justify-start')}
-                >
-                  <div
-                    className={clsx(
-                      'relative px-4 py-2 text-sm max-w-[70%] whitespace-pre-wrap break-words',
-                      isUser
-                        ? 'bg-blue-500 text-white rounded-2xl message-sent'
-                        : 'bg-zinc-100 text-zinc-900 rounded-2xl message-received'
+            (() => {
+              let lastDate = ''
+              return messages.map((msg) => {
+                const isUser = msg.sender_id === userId
+                const msgDate = formatDateHeader(msg.created_at)
+                const showDateHeader = msgDate !== lastDate
+                lastDate = msgDate
+
+                return (
+                  <div key={msg.id}>
+                    {showDateHeader && (
+                      <div className="text-center text-xs text-zinc-600 mb-2 mt-4">
+                        {msgDate}
+                      </div>
                     )}
-                  >
-                    <div>{msg.content}</div>
                     <div
-                      className={clsx(
-                        'text-[10px] mt-1 text-right',
-                        isUser ? 'text-white/70' : 'text-zinc-500'
-                      )}
+                      className={clsx('flex w-full', isUser ? 'justify-end' : 'justify-start')}
                     >
-                      {formatTime(msg.created_at)}
+                      <div
+                        className={clsx(
+                          'relative px-4 py-2 text-sm max-w-[70%] whitespace-pre-wrap break-words',
+                          isUser
+                            ? 'bg-green-500 text-white rounded-2xl message-sent'
+                            : 'bg-zinc-100 text-zinc-900 rounded-2xl message-received'
+                        )}
+                      >
+                        <div>{msg.content}</div>
+                        <div
+                          className={clsx(
+                            'text-[10px] mt-1 text-right',
+                            isUser ? 'text-white/70' : 'text-zinc-500'
+                          )}
+                        >
+                          {formatTime(msg.created_at)}
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )
-            })
+                )
+              })
+            })()
           )}
         </div>
 
@@ -206,7 +237,7 @@ export default function ConversationView({ conversation }: { conversation: any }
             }}
           />
           <button
-            className="text-blue-500 hover:text-blue-600 p-2 rounded-full"
+            className="text-green-500 hover:text-green-600 p-2 rounded-full"
             onClick={handleSend}
             disabled={sending || !newMessage.trim()}
           >

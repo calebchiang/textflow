@@ -16,7 +16,9 @@ export default function Hero() {
           </h1>
 
           <p className="mt-4 text-lg text-zinc-600">
-        Forget monthly subscriptions. Grow your SMS list and only pay per message sent.</p>
+            Forget monthly subscriptions. Grow your SMS list and only pay per message sent.
+          </p>
+
           <div className="mt-8 flex flex-col sm:flex-row sm:justify-start justify-center gap-4">
             <Link
               href="/signup"
@@ -38,8 +40,8 @@ export default function Hero() {
             className="absolute inset-0 -z-10 blur-2xl opacity-70"
             style={{
               background: `
-                radial-gradient(circle at 30% 30%, #f87171, transparent 60%),
-                radial-gradient(circle at 70% 70%, #60a5fa, transparent 60%)
+                radial-gradient(circle at 30% 30%, #fb9b9b, transparent 60%),
+                radial-gradient(circle at 70% 70%, #90bdfd, transparent 60%)
               `
             }}
           />
@@ -52,7 +54,7 @@ export default function Hero() {
             <Image
               src="/hero.png"
               alt="SMS promo example"
-              width={500}
+              width={1000}
               height={280}
               className="w-full max-w-[500px] h-auto"
             />
@@ -66,7 +68,7 @@ export default function Hero() {
             <Image
               src="/hero_2.png"
               alt="SMS promo example 2"
-              width={500}
+              width={1000}
               height={280}
               className="w-full max-w-[500px] h-auto"
             />
