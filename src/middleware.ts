@@ -1,10 +1,9 @@
+// middleware.ts
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({
-    request,
-  })
+  let response = NextResponse.next({ request })
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -15,38 +14,37 @@ export async function middleware(request: NextRequest) {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
+          // Update the incoming request’s cookies (so subsequent reads in this chain see them)
           cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
-          supabaseResponse = NextResponse.next({
-            request,
-          })
+          // Recreate the response so header mutations are preserved
+          response = NextResponse.next({ request })
+          // And set the cookies on the outgoing response
           cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
+            response.cookies.set(name, value, options)
           )
         },
       },
     }
   )
 
-  // This refreshes the auth token if needed
   await supabase.auth.getUser()
 
-  // Optional: Add your protected route logic here if needed
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
+  // Optional: protect routes
   const protectedPaths = ['/dashboard']
-  const isProtected = protectedPaths.some(path => 
-    request.nextUrl.pathname.startsWith(path)
-  )
+  const isProtected = protectedPaths.some((p) => request.nextUrl.pathname.startsWith(p))
+  if (isProtected) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
 
-  if (isProtected && !user) {
-    const loginUrl = new URL('/login', request.url)
-    loginUrl.searchParams.set('redirected', 'true')
-    return NextResponse.redirect(loginUrl)
+    if (!user) {
+      const loginUrl = new URL('/login', request.url)
+      loginUrl.searchParams.set('redirected', 'true')
+      return NextResponse.redirect(loginUrl)
+    }
   }
 
-  return supabaseResponse
+  return response
 }
 
 export const config = {
