@@ -1,54 +1,44 @@
-// middleware.ts
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-export async function middleware(request: NextRequest) {
-  let response = NextResponse.next({ request })
+export async function middleware(req: NextRequest) {
+  const res = NextResponse.next()
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll() {
-          return request.cookies.getAll()
+        get(name: string) {
+          return req.cookies.get(name)?.value
         },
-        setAll(cookiesToSet) {
-          // Update the incoming request’s cookies (so subsequent reads in this chain see them)
-          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
-          // Recreate the response so header mutations are preserved
-          response = NextResponse.next({ request })
-          // And set the cookies on the outgoing response
-          cookiesToSet.forEach(({ name, value, options }) =>
-            response.cookies.set(name, value, options)
-          )
+        set(name, value, options) {
+          res.cookies.set(name, value, options)
+        },
+        remove(name: string, options) {
+          res.cookies.set(name, '', { ...options, maxAge: -1 })
         },
       },
     }
   )
 
-  await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
 
-  // Optional: protect routes
   const protectedPaths = ['/dashboard']
-  const isProtected = protectedPaths.some((p) => request.nextUrl.pathname.startsWith(p))
-  if (isProtected) {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
 
-    if (!user) {
-      const loginUrl = new URL('/login', request.url)
-      loginUrl.searchParams.set('redirected', 'true')
-      return NextResponse.redirect(loginUrl)
-    }
+  const isProtected = protectedPaths.some(path => req.nextUrl.pathname.startsWith(path))
+
+  if (isProtected && !user) {
+    const loginUrl = new URL('/login', req.url)
+    loginUrl.searchParams.set('redirected', 'true')
+    return NextResponse.redirect(loginUrl)
   }
 
-  return response
+  return res
 }
 
 export const config = {
-  matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
-  ],
+  matcher: ['/dashboard/:path*'],
 }
