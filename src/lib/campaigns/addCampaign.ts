@@ -6,8 +6,8 @@ interface AddCampaignPayload {
   sendToAll: boolean
   selectedLists: string[]
   sendNow: boolean
-  scheduledDate?: string  
-  scheduledTime?: string  
+  scheduledDate?: string
+  scheduledTime?: string
 }
 
 export async function addCampaign(payload: AddCampaignPayload) {
@@ -28,6 +28,7 @@ export async function addCampaign(payload: AddCampaignPayload) {
     throw new Error('Missing required fields')
   }
 
+  // Prepare timestamp if scheduled
   let scheduled_at = null
   if (!sendNow && scheduledDate && scheduledTime) {
     scheduled_at = new Date(`${scheduledDate}T${scheduledTime}:00`)
@@ -35,7 +36,8 @@ export async function addCampaign(payload: AddCampaignPayload) {
 
   const list_id = sendToAll ? null : selectedLists[0] || null
 
-  const { data, error } = await supabase
+  // 1. Create campaign
+  const { data: campaign, error: campaignError } = await supabase
     .from('campaigns')
     .insert({
       user_id: user.id,
@@ -48,9 +50,45 @@ export async function addCampaign(payload: AddCampaignPayload) {
     .select('*')
     .single()
 
-  if (error || !data) {
-    throw new Error('Failed to add campaign')
+  if (campaignError || !campaign) {
+    throw new Error('Failed to create campaign')
   }
 
-  return data
+  // 2. Get contacts based on list
+  let contactQuery = supabase
+    .from('contacts')
+    .select('id, phone_number')
+    .eq('user_id', user.id)
+
+  if (list_id) {
+    contactQuery = contactQuery.eq('list_id', list_id)
+  }
+
+  const { data: contacts, error: contactError } = await contactQuery
+
+  if (contactError || !contacts || contacts.length === 0) {
+    throw new Error('No contacts found for campaign')
+  }
+
+  // 3. Prepare message inserts
+  const messagesToInsert = contacts.map((contact) => ({
+    sender_id: user.id,
+    recipient_id: contact.id, 
+    campaign_id: campaign.id,
+    content: message,
+    status: sendNow ? 'queued' : 'scheduled',
+    scheduled_at,
+    conversation_id: null,
+  }))
+
+  const { error: messageInsertError } = await supabase
+    .from('messages')
+    .insert(messagesToInsert)
+
+  if (messageInsertError) {
+    console.error('Failed to insert messages:', messageInsertError)
+    throw new Error('Failed to schedule messages for campaign')
+  }
+
+  return campaign
 }

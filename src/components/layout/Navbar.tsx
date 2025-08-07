@@ -29,8 +29,10 @@ export default function Navbar() {
     return () => subscription.unsubscribe()
   }, [supabase.auth])
 
-  const hideNavbarRoutes = ['/login', '/signup', '/dashboard', '/contacts', '/campaigns', '/inbox']
-  const shouldHide = hideNavbarRoutes.includes(pathname)
+  const shouldHide =
+  pathname.startsWith('/campaigns') ||
+  ['/login', '/signup', '/dashboard', '/contacts', '/inbox'].includes(pathname)
+  
   if (shouldHide) return null
 
   const navLinks = (

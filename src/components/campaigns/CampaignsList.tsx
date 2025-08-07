@@ -1,6 +1,7 @@
 'use client'
 
 import { Plus } from 'lucide-react'
+import Link from 'next/link'
 
 interface Campaign {
   id: string
@@ -55,23 +56,27 @@ export default function CampaignsList({ campaigns, loading, onAddCampaign }: Cam
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-200">
-              {campaigns.map((campaign, index) => (
-                <tr
-                  key={campaign.id}
-                  className={`cursor-pointer hover:bg-zinc-50 ${index % 2 === 1 ? 'bg-zinc-50' : ''}`}
-                >
-                  <td className="px-4 py-3 text-sm text-zinc-800">{campaign.name}</td>
-                  <td className="px-4 py-3 text-sm text-zinc-800">{campaign.lists?.name || 'All Contacts'}</td>
-                  <td className="px-4 py-3 text-sm text-zinc-800 capitalize">{campaign.status}</td>
-                  <td className="px-4 py-3 text-sm text-zinc-600">
-                    {campaign.scheduled_at ? new Date(campaign.scheduled_at).toLocaleString() : '-'}
-                  </td>
-                  <td className="px-4 py-3 text-sm text-zinc-600">
-                    {campaign.sent_at ? new Date(campaign.sent_at).toLocaleString() : '-'}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+            {campaigns.map((campaign, index) => (
+              <tr
+                key={campaign.id}
+                className={`${index % 2 === 1 ? 'bg-zinc-50' : ''}`}
+              >
+                <td className="px-4 py-3 text-sm text-emerald-600 font-medium hover:underline">
+                  <Link href={`/campaigns/${campaign.id}`}>
+                    {campaign.name}
+                  </Link>
+                </td>
+                <td className="px-4 py-3 text-sm text-zinc-800">{campaign.lists?.name || 'All Contacts'}</td>
+                <td className="px-4 py-3 text-sm text-zinc-800 capitalize">{campaign.status}</td>
+                <td className="px-4 py-3 text-sm text-zinc-600">
+                  {campaign.scheduled_at ? new Date(campaign.scheduled_at).toLocaleString() : '-'}
+                </td>
+                <td className="px-4 py-3 text-sm text-zinc-600">
+                  {campaign.sent_at ? new Date(campaign.sent_at).toLocaleString() : '-'}
+                </td>
+              </tr>
+            ))}
+          </tbody>
           </table>
         </div>
       )}

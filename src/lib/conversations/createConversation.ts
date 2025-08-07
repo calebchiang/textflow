@@ -34,6 +34,7 @@ export async function createConversation({ contact_id, message }: CreatePayload)
   }
 
   await sendSMS(contact.phone_number, message)
+
   const { data: existingConvo } = await supabase
     .from('conversations')
     .select('id')
@@ -64,9 +65,12 @@ export async function createConversation({ contact_id, message }: CreatePayload)
   const { data: newMessage, error: messageError } = await supabase
     .from('messages')
     .insert({
-      sender_id: user.id,              
-      conversation_id: conversationId, 
-      content: message,                
+      sender_id: user.id,
+      recipient_id: contact.id, 
+      conversation_id: conversationId,
+      content: message,
+      status: 'sent',
+      delivered_at: new Date(),
     })
     .select('id, content, created_at')
     .single()

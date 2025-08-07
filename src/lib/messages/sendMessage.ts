@@ -36,7 +36,7 @@ export async function sendMessage({ conversationId, content }: SendPayload) {
     .select('id, contact_id, contacts ( phone_number )')
     .eq('id', conversationId)
     .eq('user_id', user.id)
-    .single<Conversation>() 
+    .single<Conversation>()
 
   if (convoError || !conversation) {
     throw new Error('Conversation not found')
@@ -50,13 +50,16 @@ export async function sendMessage({ conversationId, content }: SendPayload) {
   // 2. Send SMS via Twilio
   await sendSMS(to, content)
 
-  // 3. Insert message
+  // 3. Insert message with recipient_id
   const { data: newMessage, error: messageError } = await supabase
     .from('messages')
     .insert({
       conversation_id: conversationId,
       sender_id: user.id,
+      recipient_id: conversation.contact_id, 
       content,
+      status: 'sent',
+      delivered_at: new Date(), 
     })
     .select('id, content, created_at, sender_id')
     .single()
@@ -66,7 +69,7 @@ export async function sendMessage({ conversationId, content }: SendPayload) {
     throw new Error('Failed to save message')
   }
 
-  // 4. Update timestamps
+  // 4. Update conversation timestamps
   await supabase
     .from('conversations')
     .update({
