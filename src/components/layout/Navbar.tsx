@@ -30,9 +30,10 @@ export default function Navbar() {
   }, [supabase.auth])
 
   const shouldHide =
-  pathname.startsWith('/campaigns') ||
-  ['/login', '/signup', '/dashboard', '/contacts', '/inbox'].includes(pathname)
-  
+    pathname.startsWith('/auth') ||
+    pathname.startsWith('/campaigns') ||
+    ['/login', '/signup', '/dashboard', '/contacts', '/inbox'].includes(pathname)
+
   if (shouldHide) return null
 
   const navLinks = (

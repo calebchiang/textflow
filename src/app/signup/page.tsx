@@ -35,18 +35,31 @@ export default function SignupPage() {
     }
   }
 
+  const handleGoogleSignup = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    })
+
+    if (error) {
+      setError(error.message)
+    }
+  }
+
   return (
     <div
       className="min-h-screen flex items-center justify-center px-4 py-12"
       style={{
-        backgroundColor: '#27272a', 
+        backgroundColor: '#27272a',
         backgroundImage: 'url("/backgrounds/speech_bubble_background.png")',
         backgroundRepeat: 'repeat',
         backgroundSize: '200px',
         backgroundPosition: 'center',
       }}
     >
-<div className="w-full max-w-xl min-h-[550px] bg-white backdrop-blur-md rounded-2xl shadow-2xl p-8">
+      <div className="w-full max-w-xl min-h-[550px] bg-white backdrop-blur-md rounded-2xl shadow-2xl p-8">
         <h1 className="text-3xl font-bold text-zinc-800 mb-4 mt-4 text-center">
           Grow your business with SMS
         </h1>
@@ -66,7 +79,10 @@ export default function SignupPage() {
           </li>
         </ul>
 
-        <button className="w-full flex items-center justify-center gap-3 border border-zinc-300 rounded-md py-2 mb-6 hover:bg-zinc-100 transition">
+        <button
+          className="w-full flex items-center justify-center gap-3 border border-zinc-300 rounded-md py-2 mb-6 hover:bg-zinc-100 transition"
+          onClick={handleGoogleSignup}
+        >
           <Image src="/logos/google.svg" alt="Google" width={20} height={20} />
           <span className="text-sm font-medium text-zinc-800">Sign up with Google</span>
         </button>

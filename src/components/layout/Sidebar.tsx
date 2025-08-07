@@ -2,8 +2,15 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { LayoutDashboard, Users, Megaphone, MessageCircle } from 'lucide-react'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
+import {
+  LayoutDashboard,
+  Users,
+  Megaphone,
+  MessageCircle,
+  LogOut,
+} from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
 
 const navItems = [
   { name: 'Dashboard', href: '/dashboard', icon: <LayoutDashboard className="w-5 h-5" /> },
@@ -14,10 +21,18 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname = usePathname()
+  const router = useRouter()
+  const supabase = createClient()
+
   const hideSidebarRoutes = ['/', '/login', '/signup']
   if (hideSidebarRoutes.includes(pathname)) return null
 
   const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`)
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    router.push('/')
+  }
 
   return (
     <aside className="fixed left-0 top-0 z-40 h-screen w-60 bg-zinc-50 border-r border-zinc-200 flex flex-col justify-between">
@@ -34,7 +49,7 @@ export default function Sidebar() {
           </Link>
         </div>
 
-        <nav className="space-y-2">
+        <nav className="space-y-2 mb-8">
           {navItems.map(({ name, href, icon }) => (
             <Link
               key={name}
@@ -50,6 +65,14 @@ export default function Sidebar() {
             </Link>
           ))}
         </nav>
+
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-2 text-red-500 mt-100 hover:text-red-600 text-sm transition cursor-pointer"
+        >
+          <LogOut className="w-4 h-4" />
+          Logout
+        </button>
       </div>
 
       <div className="p-6 border-t border-zinc-200 text-sm text-zinc-500">

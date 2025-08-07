@@ -42,6 +42,15 @@ function LoginContent() {
     }
   }
 
+  const handleGoogleLogin = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    })
+  }
+
   return (
     <div
       className="min-h-screen flex items-center justify-center px-4 py-12"
@@ -64,7 +73,10 @@ function LoginContent() {
           </div>
         )}
 
-        <button className="w-full flex items-center justify-center gap-3 border border-zinc-300 rounded-md py-2 mb-6 hover:bg-zinc-100 transition">
+        <button
+          onClick={handleGoogleLogin}
+          className="w-full flex items-center justify-center gap-3 border border-zinc-300 rounded-md py-2 mb-6 hover:bg-zinc-100 transition"
+        >
           <Image src="/logos/google.svg" alt="Google" width={20} height={20} />
           <span className="text-sm font-medium text-zinc-800">Continue with Google</span>
         </button>
