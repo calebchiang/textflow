@@ -9,18 +9,34 @@ export default function OAuthCallbackHandler() {
   const router = useRouter()
 
   useEffect(() => {
-    const checkSession = async () => {
-      const { data: { session }, error } = await supabase.auth.getSession()
+    const handleCallback = async () => {
+      const { error } = await supabase.auth.exchangeCodeForSession(
+        window.location.search
+      )
 
-      if (!session?.user || error) {
+      if (error) {
+        console.error('Error during OAuth callback:', error)
         router.push('/login')
         return
       }
 
-      router.push('/dashboard')
+      const { data: { session } } = await supabase.auth.getSession()
+
+      if (session) {
+        router.push('/dashboard')
+      } else {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(
+          (event, session) => {
+            if (event === 'SIGNED_IN' && session) {
+              router.push('/dashboard')
+              subscription.unsubscribe()
+            }
+          }
+        )
+      }
     }
 
-    checkSession()
+    handleCallback()
   }, [router, supabase])
 
   return <p className="text-center mt-20 text-zinc-600">Signing you in...</p>
