@@ -9,20 +9,39 @@ export default function OAuthCallbackHandler() {
   const router = useRouter()
 
   useEffect(() => {
-    // Listen for when the session becomes available
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_IN' && session?.user) {
-        // Optional: set up profile here if needed
-        router.push('/dashboard')
-      }
-    })
+    const checkSessionAndSetupProfile = async () => {
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
 
-    // Cleanup the listener on unmount
-    return () => {
-      subscription.unsubscribe()
+      if (!session?.user || sessionError) {
+        router.push('/login')
+        return
+      }
+
+      const userId = session.user.id
+
+      const { data: existingProfile, error: fetchError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', userId)
+        .maybeSingle()
+
+      if (!existingProfile) {
+        const { error: profileError } = await supabase.from('profiles').insert({
+          id: userId,
+          has_paid_number: false,
+        })
+
+        if (profileError) {
+          console.error('Error creating profile:', profileError.message)
+          router.push('/login?message=Error creating profile')
+          return
+        }
+      }
+
+      router.push('/dashboard')
     }
+
+    checkSessionAndSetupProfile()
   }, [router, supabase])
 
   return <p className="text-center mt-20 text-zinc-600">Signing you in...</p>
