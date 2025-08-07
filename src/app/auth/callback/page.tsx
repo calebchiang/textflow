@@ -26,7 +26,7 @@ export default function OAuthCallbackHandler() {
         .maybeSingle()
 
       if (!existingProfile) {
-        const { error: profileError } = await supabase.from('profiles').insert({
+        const { error: profileError } = await supabase.from('profiles').upsert({
           id: userId,
           has_paid_number: false,
         })
