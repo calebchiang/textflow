@@ -43,9 +43,20 @@ function LoginContent() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-emerald-100 px-4">
-      <div className="w-full max-w-md bg-white rounded-xl shadow-md p-8">
-        <h1 className="text-2xl font-bold text-zinc-800 mb-6 text-center">Log in to TextFlow</h1>
+    <div
+      className="min-h-screen flex items-center justify-center px-4 py-12"
+      style={{
+        backgroundColor: '#27272a',
+        backgroundImage: 'url("/backgrounds/speech_bubble_background.png")',
+        backgroundRepeat: 'repeat',
+        backgroundSize: '200px',
+        backgroundPosition: 'center',
+      }}
+    >
+      <div className="w-full max-w-md bg-white backdrop-blur-md rounded-2xl shadow-2xl p-8">
+        <h1 className="text-2xl font-bold text-zinc-800 mb-6 text-center">
+          Log in to TextFlow
+        </h1>
 
         {showVerifyMsg && (
           <div className="bg-emerald-100 border border-emerald-200 text-emerald-800 rounded-md px-4 py-3 text-sm mb-4">
@@ -102,7 +113,7 @@ function LoginContent() {
           </Link>
         </p>
       </div>
-    </main>
+    </div>
   )
 }
 

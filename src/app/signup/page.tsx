@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
+import { Check } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
 export default function SignupPage() {
@@ -35,9 +36,35 @@ export default function SignupPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-emerald-100 px-4">
-      <div className="w-full max-w-md bg-white rounded-xl shadow-md p-8">
-        <h1 className="text-2xl font-bold text-zinc-800 mb-6 text-center">Create your TextFlow account</h1>
+    <div
+      className="min-h-screen flex items-center justify-center px-4 py-12"
+      style={{
+        backgroundColor: '#27272a', 
+        backgroundImage: 'url("/backgrounds/speech_bubble_background.png")',
+        backgroundRepeat: 'repeat',
+        backgroundSize: '200px',
+        backgroundPosition: 'center',
+      }}
+    >
+<div className="w-full max-w-xl min-h-[550px] bg-white backdrop-blur-md rounded-2xl shadow-2xl p-8">
+        <h1 className="text-3xl font-bold text-zinc-800 mb-4 mt-4 text-center">
+          Grow your business with SMS
+        </h1>
+
+        <ul className="text-sm text-zinc-600 mb-6 space-y-2">
+          <li className="flex items-start gap-2">
+            <Check className="text-emerald-500 w-4 h-4 mt-0.5" />
+            SMS messages receive a 98% open rate
+          </li>
+          <li className="flex items-start gap-2">
+            <Check className="text-emerald-500 w-4 h-4 mt-0.5" />
+            Increase your response and conversion rates
+          </li>
+          <li className="flex items-start gap-2">
+            <Check className="text-emerald-500 w-4 h-4 mt-0.5" />
+            Send bulk promotions and marketing campaigns
+          </li>
+        </ul>
 
         <button className="w-full flex items-center justify-center gap-3 border border-zinc-300 rounded-md py-2 mb-6 hover:bg-zinc-100 transition">
           <Image src="/logos/google.svg" alt="Google" width={20} height={20} />
@@ -58,7 +85,7 @@ export default function SignupPage() {
             type="email"
             placeholder="Email"
             value={email}
-            onChange={e => setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
             required
             className="px-4 py-2 border border-zinc-300 rounded-md text-zinc-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
           />
@@ -66,7 +93,7 @@ export default function SignupPage() {
             type="password"
             placeholder="Password"
             value={password}
-            onChange={e => setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
             required
             className="px-4 py-2 border border-zinc-300 rounded-md text-zinc-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
           />
@@ -88,6 +115,6 @@ export default function SignupPage() {
           </Link>
         </p>
       </div>
-    </main>
+    </div>
   )
 }
