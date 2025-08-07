@@ -27,7 +27,7 @@ export default async function CampaignPage({ params }: CampaignPageProps) {
         className="mb-2 inline-flex items-center text-sm text-zinc-500 hover:text-zinc-700 transition-colors"
       >
         <ArrowLeft className="w-4 h-4 mr-1" />
-        Back to campaigns
+       
       </Link>
 
       <CampaignDetails campaign={campaign} />
