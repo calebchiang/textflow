@@ -183,23 +183,25 @@ export default function GetPhoneNumberModal({ open, onClose }: GetPhoneNumberMod
            <Button
             className="w-full bg-emerald-600 hover:bg-emerald-700"
             onClick={async () => {
-                try {
+              if (!selectedNumber) return
+              try {
                 const res = await fetch('/api/checkout', {
-                    method: 'POST',
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ selectedNumber }),
                 })
 
                 const data = await res.json()
-
                 if (res.ok && data.url) {
-                    window.location.href = data.url
+                  window.location.href = data.url
                 } else {
-                    console.error('Checkout session error:', data.error)
-                    alert('Something went wrong creating the payment session.')
+                  console.error('Checkout session error:', data.error)
+                  alert('Something went wrong creating the payment session.')
                 }
-                } catch (err) {
+              } catch (err) {
                 console.error('Checkout error:', err)
                 alert('Payment failed to start.')
-                }
+              }
             }}
             >
             Continue to Payment
