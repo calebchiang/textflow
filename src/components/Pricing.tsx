@@ -1,12 +1,13 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 
 export default function Pricing() {
   const [country, setCountry] = useState('canada')
   const [volume, setVolume] = useState(100)
 
-  const smsPrice = 0.04 
+  const smsPrice = 0.05
 
   const totalCost = (volume * smsPrice).toFixed(2)
 
@@ -63,19 +64,21 @@ export default function Pricing() {
 
         <div className="bg-zinc-50 p-8 flex flex-col justify-between">
           <div>
-            <h4 className="text-lg font-semibold text-zinc-700 mb-2">Estimated total cost:</h4>
+            <h4 className="text-lg font-semibold text-zinc-700 mb-2">Estimated cost:</h4>
             <p className="text-4xl font-bold text-zinc-900 mb-6">${totalCost} CAD</p>
 
             <div className="space-y-2 text-sm text-zinc-600">
-              <p>{volume.toLocaleString()} SMS @ 4¢ per SMS</p>
-              <p>Toll-free number included</p>
+              <p>{volume.toLocaleString()} SMS @ 5¢ per SMS</p>
+              <p>$4.99/month for a 10DLC business number</p>
               <p>No monthly subscriptions</p>
             </div>
           </div>
 
-          <button className="mt-8 bg-emerald-600 text-white py-3 rounded-md hover:bg-emerald-700 transition">
-            Start Free Trial
-          </button>
+          <Link href="/signup">
+            <button className="mt-8 bg-emerald-600 text-white py-3 rounded-md hover:bg-emerald-700 transition w-full">
+              Start for Free
+            </button>
+          </Link>
         </div>
       </div>
     </section>
