@@ -5,6 +5,7 @@ import SocialProof from "@/components/SocialProof";
 import AudienceComparison from "@/components/AudienceComparison";
 import CTA from "@/components/CTA";
 import Pricing from "@/components/Pricing";
+import TollFreeNumber from "@/components/TollFreeNumber";
 
 export default function Home() {
   return (
@@ -12,8 +13,9 @@ export default function Home() {
       <Hero />
       <SocialProof />
       <Features  />
+      <TollFreeNumber />
       <Pricing />
-      <AudienceComparison /> 
+      {/* <AudienceComparison />  */}
       <CTA />
     </main>
   )

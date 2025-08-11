@@ -69,7 +69,7 @@ export default function Pricing() {
 
             <div className="space-y-2 text-sm text-zinc-600">
               <p>{volume.toLocaleString()} SMS @ 5¢ per SMS</p>
-              <p>$4.99/month for a 10DLC business number</p>
+              <p>$4.99/month for a verified toll-free business number</p>
               <p>No monthly subscriptions</p>
             </div>
           </div>

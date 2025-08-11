@@ -6,7 +6,7 @@ import { RetroGrid } from '@/components/magicui/retro-grid'
 
 export default function CTA() {
   return (
-    <section className="relative overflow-hidden bg-zinc-50 px-6 py-2 rounded-none mb-8">
+    <section className="relative overflow-hidden bg-white px-6 py-2 rounded-none">
       <div className="relative z-10 flex flex-col items-center justify-center text-center max-w-4xl mx-auto space-y-8 mt-8">
         <h2 className="pointer-events-none whitespace-pre-wrap bg-gradient-to-b from-[#ffd319] via-[#ff2975] to-[#8c1eff] bg-clip-text text-4xl md:text-5xl font-bold leading-tight tracking-tighter text-transparent">
           Start Driving More Sales Today
