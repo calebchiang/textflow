@@ -13,7 +13,6 @@ import {
 export default function TollFreeNumber() {
   return (
     <section className="relative bg-zinc-50 py-20 overflow-hidden">
-      {/* decorative background */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10 opacity-70 blur-3xl"
@@ -34,14 +33,12 @@ export default function TollFreeNumber() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-stretch">
-          {/* Left: content */}
           <div className="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-zinc-200 p-8">
             <div className="flex items-start justify-between gap-4">
               <h2 className="text-3xl font-bold text-zinc-900">
                 Purchase a verified toll-free number
               </h2>
 
-              {/* price badge */}
               <div className="shrink-0">
                 <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-center">
                   <div className="text-xs text-zinc-500 line-through">$8.99</div>
@@ -54,10 +51,9 @@ export default function TollFreeNumber() {
 
             <p className="mt-4 text-zinc-600">
               Get a trusted, carrier-approved toll-free number for better deliverability and brand
-              credibility. The whole process takes minutes to start and as little as two days to go live.
+              credibility. 
             </p>
 
-            {/* benefits */}
             <ul className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
               <li className="flex items-start gap-3">
                 <ShieldCheck className="h-5 w-5 text-emerald-600 mt-0.5" />
@@ -97,7 +93,6 @@ export default function TollFreeNumber() {
               </li>
             </ul>
 
-            {/* CTAs */}
             <div className="mt-8 flex flex-col sm:flex-row gap-3">
               <Link
                 href="/signup?plan=tollfree"
@@ -149,25 +144,25 @@ export default function TollFreeNumber() {
                 <h3 className="text-sm font-semibold text-zinc-700 uppercase tracking-wide">
                   How it works
                 </h3>
-                <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <Step
                     icon={<Phone className="h-4 w-4" />}
-                    title="1. Pick your number"
+                    title="Pick your number"
                     desc="Choose a toll-free you like or let us auto-assign."
                   />
                   <Step
                     icon={<ShieldCheck className="h-4 w-4" />}
-                    title="2. 5-minute verification"
+                    title="5-minute verification"
                     desc="Fill a short form about your brand & use case."
                   />
                   <Step
                     icon={<Clock className="h-4 w-4" />}
-                    title="3. Carrier review"
+                    title="Carrier review"
                     desc="We submit to carriers for quick approval."
                   />
                   <Step
                     icon={<CheckCircle2 className="h-4 w-4" />}
-                    title="4. Start sending"
+                    title="Start sending"
                     desc="Go live in ~2 days and begin messaging."
                   />
                 </div>
