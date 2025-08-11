@@ -5,20 +5,16 @@ const authToken = process.env.TWILIO_AUTH_TOKEN!
 
 const client = twilio(accountSid, authToken)
 
-export async function getAvailablePhoneNumbers(areaCode?: string) {
+export async function getAvailablePhoneNumbers() {
   try {
     const searchOptions: any = {
       smsEnabled: true,
       limit: 10,
     }
 
-    if (areaCode) {
-      searchOptions.areaCode = parseInt(areaCode)
-    }
-
     const numbers = await client
-      .availablePhoneNumbers('CA')
-      .local
+      .availablePhoneNumbers('US') 
+      .tollFree
       .list(searchOptions)
 
     return numbers.map((n) => ({
@@ -26,7 +22,7 @@ export async function getAvailablePhoneNumbers(areaCode?: string) {
       friendlyName: n.friendlyName,
     }))
   } catch (err) {
-    console.error('Error fetching phone numbers:', err)
+    console.error('Error fetching toll-free phone numbers:', err)
     throw err
   }
 }

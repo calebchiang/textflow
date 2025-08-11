@@ -3,7 +3,7 @@ import { serviceSupabase } from '@/lib/supabase/service'
 
 type Params = {
   userId: string
-  selectedNumber: string // E.164
+  selectedNumber: string 
 }
 
 export async function phoneNumberConfirmation({ userId, selectedNumber }: Params) {
@@ -19,9 +19,7 @@ export async function phoneNumberConfirmation({ userId, selectedNumber }: Params
     phoneNumber: selectedNumber,
   })
 
-  console.log('📞 Twilio purchase response:', JSON.stringify(purchased, null, 2))
-
-  const country = 'ca' // TODO: make dynamic later
+  const country = 'ca' 
   const { error: insertError } = await serviceSupabase.from('phone_numbers').insert({
     user_id: userId,
     number: purchased.phoneNumber,

@@ -10,7 +10,6 @@ import {
   DialogClose,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Search, CheckCircle } from 'lucide-react'
 import clsx from 'clsx'
 
@@ -26,49 +25,45 @@ interface AvailableNumber {
 
 export default function GetPhoneNumberModal({ open, onClose }: GetPhoneNumberModalProps) {
   const [step, setStep] = useState(1)
-  const [areaCode, setAreaCode] = useState('')
   const [availableNumbers, setAvailableNumbers] = useState<AvailableNumber[]>([])
   const [loading, setLoading] = useState(false)
   const [selectedNumber, setSelectedNumber] = useState<string | null>(null)
-  const [noResults, setNoResults] = useState(false) 
-  const [useAnyArea, setUseAnyArea] = useState(false)
+  const [noResults, setNoResults] = useState(false)
 
   useEffect(() => {
     if (!open) {
       setStep(1)
-      setAreaCode('')
       setAvailableNumbers([])
       setSelectedNumber(null)
       setLoading(false)
-      setNoResults(false) 
+      setNoResults(false)
     }
   }, [open])
 
   const handleSearch = async () => {
-    if (!areaCode && !useAnyArea) return
     setLoading(true)
     setNoResults(false)
 
     const res = await fetch('/api/twilio/get-phone-numbers', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ areaCode: useAnyArea ? '' : areaCode }),
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({}), // Toll-Free search doesn't need params
     })
 
     const data = await res.json()
     setLoading(false)
 
     if (res.ok) {
-        if (data.numbers.length === 0) {
+      if (data.numbers.length === 0) {
         setNoResults(true)
-        } else {
+      } else {
         setAvailableNumbers(data.numbers)
         setStep(2)
-        }
+      }
     } else {
-        console.error(data.error)
+      console.error(data.error)
     }
-    }
+  }
 
   const handleNext = () => {
     if (selectedNumber) setStep(3)
@@ -82,58 +77,33 @@ export default function GetPhoneNumberModal({ open, onClose }: GetPhoneNumberMod
         </DialogHeader>
 
         {step === 1 && (
-        <div className="grid gap-4 py-2 text-sm text-zinc-600">
+          <div className="grid gap-4 py-2 text-sm text-zinc-600">
             <p>
-            This is where you'll choose the phone number you'll send SMS messages from.
-            Enter a preferred area code below or search all available Canadian numbers.
+              This is where you'll choose the phone number you'll send SMS messages from.
+              We provide <span className="font-medium">North American Toll-Free</span> numbers that work in the US and Canada.
             </p>
 
-            <div className="grid gap-2">
-            <label className="text-sm font-medium text-zinc-700">Area Code</label>
-            <Input
-                placeholder="e.g. 604"
-                value={areaCode}
-                onChange={(e) =>
-                setAreaCode(e.target.value.replace(/\D/g, '').slice(0, 3))
-                }
-                inputMode="numeric"
-                pattern="[0-9]*"
-                maxLength={3}
-                disabled={useAnyArea}
-                className={useAnyArea ? 'opacity-50 cursor-not-allowed' : ''}
-            />
-            </div>
-
-            <label className="flex items-center gap-2 text-sm text-zinc-700">
-            <input
-                type="checkbox"
-                checked={useAnyArea}
-                onChange={() => setUseAnyArea(!useAnyArea)}
-            />
-            Search all available numbers in Canada
-            </label>
-
             <Button
-            className="w-full gap-2"
-            disabled={(!areaCode && !useAnyArea) || loading}
-            onClick={handleSearch}
+              className="w-full gap-2"
+              disabled={loading}
+              onClick={handleSearch}
             >
-            <Search className="w-4 h-4" />
-            {loading ? 'Searching...' : 'Search Available Numbers'}
+              <Search className="w-4 h-4" />
+              {loading ? 'Searching...' : 'Search Available Numbers'}
             </Button>
 
             {noResults && (
-            <p className="text-red-500 text-sm">
+              <p className="text-red-500 text-sm">
                 No available phone numbers found.
-            </p>
+              </p>
             )}
-        </div>
+          </div>
         )}
 
         {step === 2 && (
           <div className="grid gap-4 py-2">
             <p className="text-sm text-zinc-600">
-              Select a number from the list below. All numbers are SMS-enabled and unique to you.
+              Select a Toll-Free number from the list below. All numbers are SMS-enabled and unique to you.
             </p>
 
             <div className="max-h-60 overflow-y-auto border rounded-md">
@@ -165,48 +135,48 @@ export default function GetPhoneNumberModal({ open, onClose }: GetPhoneNumberMod
         )}
 
         {step === 3 && (
-        <div className="grid gap-4 py-2 text-sm text-zinc-600">
+          <div className="grid gap-4 py-2 text-sm text-zinc-600">
             <p>You selected:</p>
             <div className="text-lg font-semibold text-zinc-800">
-            {selectedNumber}
+              {selectedNumber}
             </div>
 
             <div className="text-sm text-zinc-600 mt-1">
-            This number will be yours exclusively and used to send and receive SMS messages from your dashboard.
+              This Toll-Free number will be yours exclusively and used to send and receive SMS messages from your dashboard.
             </div>
 
             <div className="mt-4 p-3 bg-zinc-100 rounded-md text-sm text-zinc-700">
-            <div className="text-xs text-zinc-500 mb-1">Price (🇨🇦)</div>
-            <div className="text-2xl font-bold text-zinc-800">$4.99/month</div>
+              <div className="text-xs text-zinc-500 mb-1">Price (🇨🇦)</div>
+              <div className="text-2xl font-bold text-zinc-800">$4.99/month</div>
             </div>
 
-           <Button
-            className="w-full bg-emerald-600 hover:bg-emerald-700"
-            onClick={async () => {
-              if (!selectedNumber) return
-              try {
-                const res = await fetch('/api/checkout', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ selectedNumber }),
-                })
+            <Button
+              className="w-full bg-emerald-600 hover:bg-emerald-700"
+              onClick={async () => {
+                if (!selectedNumber) return
+                try {
+                  const res = await fetch('/api/checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ selectedNumber }),
+                  })
 
-                const data = await res.json()
-                if (res.ok && data.url) {
-                  window.location.href = data.url
-                } else {
-                  console.error('Checkout session error:', data.error)
-                  alert('Something went wrong creating the payment session.')
+                  const data = await res.json()
+                  if (res.ok && data.url) {
+                    window.location.href = data.url
+                  } else {
+                    console.error('Checkout session error:', data.error)
+                    alert('Something went wrong creating the payment session.')
+                  }
+                } catch (err) {
+                  console.error('Checkout error:', err)
+                  alert('Payment failed to start.')
                 }
-              } catch (err) {
-                console.error('Checkout error:', err)
-                alert('Payment failed to start.')
-              }
-            }}
+              }}
             >
-            Continue to Payment
+              Continue to Payment
             </Button>
-        </div>
+          </div>
         )}
 
         <DialogFooter className="mt-4 flex items-center justify-between">
