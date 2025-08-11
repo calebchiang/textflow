@@ -32,6 +32,7 @@ export default function Navbar() {
   const shouldHide =
     pathname.startsWith('/auth') ||
     pathname.startsWith('/campaigns') ||
+    pathname.startsWith('/numbers') || 
     ['/login', '/signup', '/dashboard', '/contacts', '/inbox'].includes(pathname)
 
   if (shouldHide) return null

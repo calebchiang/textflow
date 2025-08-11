@@ -4,10 +4,16 @@ import { useEffect, useState } from 'react'
 import WelcomeMessage from '@/components/dashboard/WelcomeMessage'
 import GetPhoneNumber from '@/components/dashboard/GetPhoneNumber'
 import GetPhoneNumberModal from '@/components/dashboard/GetPhoneNumberModal'
+import PhoneNumberInfo from '@/components/dashboard/PhoneNumberInfo'
+
+type PhoneNumberRow = {
+  number: string
+  status?: string // 'unverified' | 'in_review' | 'approved' | 'rejected'
+}
 
 export default function DashboardPage() {
   const [showPhoneModal, setShowPhoneModal] = useState(false)
-  const [phoneNumber, setPhoneNumber] = useState<any | null>(null)
+  const [phoneNumber, setPhoneNumber] = useState<PhoneNumberRow | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -19,11 +25,11 @@ export default function DashboardPage() {
         if (res.ok) {
           setPhoneNumber(data.phoneNumber || null)
         }
-      } catch (_) {} finally {
+      } catch (_) {
+      } finally {
         setLoading(false)
       }
     }
-
     init()
   }, [])
 
@@ -37,9 +43,15 @@ export default function DashboardPage() {
             <div className="h-4 w-56 bg-zinc-200 rounded animate-pulse" />
           </div>
         ) : phoneNumber?.number ? (
-          <p className="w-full text-left text-sm text-zinc-700 mt-2">
-            Your Business Number: {phoneNumber.number}
-          </p>
+          <div className="w-full text-left mt-2 space-y-3">
+            <PhoneNumberInfo
+              number={phoneNumber.number}
+              status={phoneNumber.status as any}
+              onVerify={() => {
+                window.location.href = '/numbers/verify'
+              }}
+            />
+          </div>
         ) : (
           <>
             <GetPhoneNumber onOpenModal={() => setShowPhoneModal(true)} />
