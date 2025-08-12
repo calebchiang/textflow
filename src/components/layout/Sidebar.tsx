@@ -9,6 +9,7 @@ import {
   Megaphone,
   MessageCircle,
   LogOut,
+  Settings,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
@@ -27,7 +28,8 @@ export default function Sidebar() {
   const hideSidebarRoutes = ['/', '/login', '/signup']
   if (hideSidebarRoutes.includes(pathname)) return null
 
-  const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`)
+  const isActive = (href: string) =>
+    pathname === href || pathname.startsWith(`${href}/`)
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
@@ -35,7 +37,7 @@ export default function Sidebar() {
   }
 
   return (
-    <aside className="fixed left-0 top-0 z-40 h-screen w-60 bg-zinc-50 border-r border-zinc-200 flex flex-col justify-between">
+    <aside className="fixed left-0 top-0 z-40 h-screen w-60 bg-zinc-50 border-r border-zinc-200 flex flex-col">
       <div className="p-6">
         <div className="flex justify-center mb-6">
           <Link href="/">
@@ -49,7 +51,7 @@ export default function Sidebar() {
           </Link>
         </div>
 
-        <nav className="space-y-2 mb-8">
+        <nav className="space-y-2">
           {navItems.map(({ name, href, icon }) => (
             <Link
               key={name}
@@ -65,18 +67,29 @@ export default function Sidebar() {
             </Link>
           ))}
         </nav>
-
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-2 text-red-500 mt-100 hover:text-red-600 text-sm transition cursor-pointer"
-        >
-          <LogOut className="w-4 h-4" />
-          Logout
-        </button>
       </div>
 
-      <div className="p-6 border-t border-zinc-200 text-sm text-zinc-500">
-        <p className="text-xs text-zinc-400">TextFlow © 2025</p>
+      <div className="mt-auto px-6">
+        <div className="flex items-center justify-between gap-3 rounded-md border border-zinc-200 bg-white px-3 py-2 shadow-sm">
+          <Link
+            href="/settings"
+            className="flex items-center gap-2 text-zinc-700 hover:text-zinc-900 text-sm transition"
+          >
+            <Settings className="w-4 h-4" />
+            <span className="font-medium">Settings</span>
+          </Link>
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 text-red-500 hover:text-red-600 text-sm transition"
+          >
+            <LogOut className="w-4 h-4" />
+            <span className="font-medium">Logout</span>
+          </button>
+        </div>
+
+        <div className="mt-4 border-t border-zinc-200 py-4 text-sm text-zinc-500">
+          <p className="text-xs text-zinc-400">TextFlow © 2025</p>
+        </div>
       </div>
     </aside>
   )

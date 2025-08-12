@@ -33,7 +33,7 @@ export default function Navbar() {
     pathname.startsWith('/auth') ||
     pathname.startsWith('/campaigns') ||
     pathname.startsWith('/numbers') || 
-    ['/login', '/signup', '/dashboard', '/contacts', '/inbox'].includes(pathname)
+    ['/login', '/signup', '/dashboard', '/contacts', '/inbox', '/settings'].includes(pathname)
 
   if (shouldHide) return null
 

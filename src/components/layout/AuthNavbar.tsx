@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { User } from 'lucide-react'
 import GetCreditsModal from '@/components/GetCreditsModal'
 
@@ -13,7 +13,10 @@ type ProfileRow = {
 
 export default function AuthNavbar() {
   const pathname = usePathname()
-  const shouldHide = pathname === '/'
+  const router = useRouter()
+
+  const hideNavbarRoutes = ['/', '/login', '/signup']
+  const shouldHide = hideNavbarRoutes.includes(pathname)
 
   const [profile, setProfile] = useState<ProfileRow | null>(null)
   const [loading, setLoading] = useState(true)
@@ -62,7 +65,7 @@ export default function AuthNavbar() {
               >
                 <span className="font-medium">Credits:</span>{' '}
                 {credits === null ? (
-                  <span className="inline-block h-3 w-8 align-middle rounded bg-zinc-300 animate-pulse" />
+                  <span className="inline-block h-3 w-8 align-middle rounded bg-zinc-300 animate-pulse cursor-pointer" />
                 ) : (
                   <span className="font-semibold">{credits}</span>
                 )}
@@ -71,7 +74,8 @@ export default function AuthNavbar() {
               <button
                 type="button"
                 aria-label="User menu"
-                className="inline-flex items-center justify-center rounded-full border border-zinc-200 bg-white p-2 hover:bg-zinc-100 transition"
+                onClick={() => router.push('/settings')}
+                className="inline-flex items-center justify-center rounded-full border border-zinc-200 bg-white p-2 hover:bg-zinc-100 transition cursor-pointer"
               >
                 <User className="h-5 w-5 text-zinc-700" />
               </button>

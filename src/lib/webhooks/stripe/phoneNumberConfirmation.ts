@@ -3,10 +3,11 @@ import { serviceSupabase } from '@/lib/supabase/service'
 
 type Params = {
   userId: string
-  selectedNumber: string 
+  selectedNumber: string
+  stripeSubscriptionId: string
 }
 
-export async function phoneNumberConfirmation({ userId, selectedNumber }: Params) {
+export async function phoneNumberConfirmation({ userId, selectedNumber, stripeSubscriptionId }: Params) {
   const accountSid = process.env.TWILIO_ACCOUNT_SID!
   const authToken = process.env.TWILIO_AUTH_TOKEN!
   const client = twilio(accountSid, authToken)
@@ -19,12 +20,14 @@ export async function phoneNumberConfirmation({ userId, selectedNumber }: Params
     phoneNumber: selectedNumber,
   })
 
-  const country = 'ca' 
+  const country = 'ca'
   const { error: insertError } = await serviceSupabase.from('phone_numbers').insert({
     user_id: userId,
     number: purchased.phoneNumber,
     twilio_phone_sid: purchased.sid,
     country,
+    stripe_subscription_id: stripeSubscriptionId,
+    status: 'unverified',
   })
 
   if (insertError) {
@@ -35,6 +38,7 @@ export async function phoneNumberConfirmation({ userId, selectedNumber }: Params
     user_id: userId,
     number: purchased.phoneNumber,
     twilio_phone_sid: purchased.sid,
-    status: 'active',
+    stripe_subscription_id: stripeSubscriptionId,
+    status: 'unverified',
   }
 }
