@@ -34,7 +34,7 @@ export default function DashboardPage() {
   }, [])
 
   return (
-    <main className="ml-60 flex min-h-screen items-start mt-2 justify-center bg-zinc-50 px-4 text-zinc-800">
+    <main className="ml-60 flex min-h-screen items-start mt-2 justify-center bg-zinc-50 px-4 text-zinc-800 pt-14">
       <div className="flex flex-col items-center text-center space-y-8 max-w-3xl w-full">
         <WelcomeMessage />
 

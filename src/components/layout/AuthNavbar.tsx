@@ -50,7 +50,7 @@ export default function AuthNavbar() {
 
   return (
     <>
-      <header className="sticky top-0 left-0 right-0 z-30 border-b border-zinc-200 bg-zinc-50">
+      <header className="sticky top-0 left-0 right-0 z-30 border-b border-zinc-200 bg-zinc-50 h-14">
         <div className="pl-60 max-w-full px-6 py-3">
           <div className="flex items-center justify-between">
             <div />
