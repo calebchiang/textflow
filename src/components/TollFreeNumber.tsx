@@ -114,10 +114,8 @@ export default function TollFreeNumber() {
             </p>
           </div>
 
-          {/* Right: card highlight */}
           <aside className="lg:col-span-2">
             <div className="h-full rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm flex flex-col">
-              {/* Why card */}
               <div className="rounded-xl bg-gradient-to-br from-emerald-50 to-zinc-50 border border-emerald-100 p-5">
                 <div className="flex items-center gap-2 text-emerald-700">
                   <ShieldCheck className="h-5 w-5" />
@@ -139,7 +137,6 @@ export default function TollFreeNumber() {
                 </ul>
               </div>
 
-              {/* Steps card (2x2 compact grid) */}
               <div className="mt-6 rounded-xl bg-zinc-50 border border-zinc-200 p-5">
                 <h3 className="text-sm font-semibold text-zinc-700 uppercase tracking-wide">
                   How it works

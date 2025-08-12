@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { MessageCircle, Send } from 'lucide-react'
+import { MessageCircle, Send, AlertTriangle } from 'lucide-react'
 import clsx from 'clsx'
 
 export default function ConversationView({ conversation }: { conversation: any }) {
@@ -10,6 +10,7 @@ export default function ConversationView({ conversation }: { conversation: any }
   const [loading, setLoading] = useState(false)
   const [newMessage, setNewMessage] = useState('')
   const [sending, setSending] = useState(false)
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
   const messagesContainerRef = useRef<HTMLDivElement | null>(null)
 
@@ -40,13 +41,15 @@ export default function ConversationView({ conversation }: { conversation: any }
 
   useEffect(() => {
     if (messagesContainerRef.current) {
-      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight
+      messagesContainerRef.current.scrollTop =
+        messagesContainerRef.current.scrollHeight
     }
   }, [messages])
 
   const handleSend = async () => {
     if (!newMessage.trim() || !conversation) return
     setSending(true)
+    setErrorMsg(null)
 
     try {
       const res = await fetch('/api/messages/send', {
@@ -58,12 +61,22 @@ export default function ConversationView({ conversation }: { conversation: any }
         }),
       })
 
-      const { message } = await res.json()
-      if (res.ok && message) {
-        setMessages((prev) => [...prev, message])
+      const data = await res.json()
+
+      if (!res.ok) {
+        // Backend currently returns { error: string }
+        // Check for the unverified case
+        if (typeof data?.error === 'string' && data.error.toLowerCase().includes('not verified')) {
+          setErrorMsg('You must verify your Toll-Free number before sending messages.')
+        } else {
+          console.error('Failed to send message:', data?.error || 'Unknown error')
+        }
+        return
+      }
+
+      if (data?.message) {
+        setMessages((prev) => [...prev, data.message])
         setNewMessage('')
-      } else {
-        console.error('Failed to send message:', message?.error || 'Unknown error')
       }
     } catch (err) {
       console.error('Error sending message:', err)
@@ -172,10 +185,7 @@ export default function ConversationView({ conversation }: { conversation: any }
             Array.from({ length: 6 }).map((_, i) => (
               <div
                 key={i}
-                className={clsx(
-                  'flex',
-                  i % 2 === 0 ? 'justify-start' : 'justify-end'
-                )}
+                className={clsx('flex', i % 2 === 0 ? 'justify-start' : 'justify-end')}
               >
                 <div className="rounded-2xl bg-zinc-200 h-5 w-1/2 max-w-[70%] px-4 py-2 animate-pulse" />
               </div>
@@ -196,9 +206,7 @@ export default function ConversationView({ conversation }: { conversation: any }
                         {msgDate}
                       </div>
                     )}
-                    <div
-                      className={clsx('flex w-full', isUser ? 'justify-end' : 'justify-start')}
-                    >
+                    <div className={clsx('flex w-full', isUser ? 'justify-end' : 'justify-start')}>
                       <div
                         className={clsx(
                           'relative px-4 py-2 text-sm max-w-[70%] whitespace-pre-wrap break-words',
@@ -224,6 +232,20 @@ export default function ConversationView({ conversation }: { conversation: any }
             })()
           )}
         </div>
+
+        {/* hazard banner if number isn't verified */}
+        {errorMsg && (
+          <div className="mx-4 mb-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800 flex items-start gap-2">
+            <AlertTriangle className="h-4 w-4 mt-0.5 text-amber-500" />
+            <span>
+              {errorMsg}{' '}
+              <a href="/numbers/verify" className="underline text-amber-800 hover:text-amber-900">
+                Verify here
+              </a>
+              .
+            </span>
+          </div>
+        )}
 
         <div className="px-4 py-3 border-t border-zinc-200 flex items-center gap-2">
           <input

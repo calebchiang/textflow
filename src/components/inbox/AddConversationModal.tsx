@@ -10,6 +10,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
+import { AlertTriangle } from 'lucide-react'
 
 interface Contact {
   id: string
@@ -35,6 +36,7 @@ export default function AddConversationModal({
   const [step, setStep] = useState<1 | 2>(1)
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(false)
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
   useEffect(() => {
     if (!open) return
@@ -42,6 +44,7 @@ export default function AddConversationModal({
     setRecipient('')
     setSelectedContact(null)
     setMessage('')
+    setErrorMsg(null)
 
     const fetchContacts = async () => {
       try {
@@ -70,6 +73,7 @@ export default function AddConversationModal({
   const handleSelect = (contact: Contact) => {
     setSelectedContact(contact)
     setStep(2)
+    setErrorMsg(null)
   }
 
   const handleSend = async () => {
@@ -77,6 +81,8 @@ export default function AddConversationModal({
 
     try {
       setLoading(true)
+      setErrorMsg(null)
+
       const res = await fetch('/api/conversations/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -89,7 +95,13 @@ export default function AddConversationModal({
       const data = await res.json()
 
       if (!res.ok) {
-        console.error('Failed to send message:', data.error || 'Unknown error')
+        const errStr = String(data?.error || '')
+        // Show a hazard banner for unverified TFN
+        if (errStr === 'NUMBER_NOT_VERIFIED' || errStr.toLowerCase().includes('not verified')) {
+          setErrorMsg('You must verify your Toll-Free number before sending messages.')
+        } else {
+          console.error('Failed to send message:', errStr || 'Unknown error')
+        }
         return
       }
 
@@ -117,6 +129,20 @@ export default function AddConversationModal({
           <DialogTitle>New Message</DialogTitle>
         </DialogHeader>
 
+        {/* Hazard banner for unverified number */}
+        {errorMsg && (
+          <div className="mb-3 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800 flex items-start gap-2">
+            <AlertTriangle className="h-4 w-4 mt-0.5 text-amber-500" />
+            <span>
+              {errorMsg}{' '}
+              <a href="/numbers/verify" className="underline text-amber-800 hover:text-amber-900">
+                Verify here
+              </a>
+              .
+            </span>
+          </div>
+        )}
+
         {step === 1 && (
           <>
             <div className="py-2 space-y-2">
@@ -128,6 +154,7 @@ export default function AddConversationModal({
                   onChange={(e) => {
                     setRecipient(e.target.value)
                     setSelectedContact(null)
+                    setErrorMsg(null)
                   }}
                 />
               </div>

@@ -14,15 +14,9 @@ export async function createConversation({ contact_id, message }: CreatePayload)
     error: userError,
   } = await supabase.auth.getUser()
 
-  if (userError || !user) {
-    throw new Error('Unauthorized')
-  }
+  if (userError || !user) throw new Error('Unauthorized')
+  if (!contact_id || !message) throw new Error('Missing contact_id or message')
 
-  if (!contact_id || !message) {
-    throw new Error('Missing contact_id or message')
-  }
-
-  // 1) Get contact's phone number
   const { data: contact, error: contactError } = await supabase
     .from('contacts')
     .select('id, phone_number')
@@ -30,14 +24,11 @@ export async function createConversation({ contact_id, message }: CreatePayload)
     .eq('user_id', user.id)
     .single()
 
-  if (contactError || !contact) {
-    throw new Error('Contact not found')
-  }
+  if (contactError || !contact) throw new Error('Contact not found')
 
-  // 2) Get the user’s sending number (most recent)
   const { data: phone, error: phoneErr } = await supabase
     .from('phone_numbers')
-    .select('number, created_at')
+    .select('number, status, created_at')
     .eq('user_id', user.id)
     .order('created_at', { ascending: false })
     .limit(1)
@@ -51,10 +42,14 @@ export async function createConversation({ contact_id, message }: CreatePayload)
     throw new Error('No sending number found. Please purchase a Toll-Free number first.')
   }
 
-  // 3) Send the first message in the conversation
+  if (phone.status !== 'verified') {
+    const err: any = new Error('Number not verified')
+    err.code = 'NUMBER_NOT_VERIFIED'
+    throw err
+  }
+
   await sendSMS(contact.phone_number, message, phone.number)
 
-  // 4) Check if conversation already exists
   const { data: existingConvo } = await supabase
     .from('conversations')
     .select('id')
@@ -64,7 +59,6 @@ export async function createConversation({ contact_id, message }: CreatePayload)
 
   let conversationId = existingConvo?.id
 
-  // 5) Create a new conversation if none exists
   if (!conversationId) {
     const { data: convo, error: convoError } = await supabase
       .from('conversations')
@@ -76,14 +70,10 @@ export async function createConversation({ contact_id, message }: CreatePayload)
       .select('id')
       .single()
 
-    if (convoError || !convo) {
-      throw new Error('Failed to create conversation')
-    }
-
+    if (convoError || !convo) throw new Error('Failed to create conversation')
     conversationId = convo.id
   }
 
-  // 6) Save the message in DB
   const { data: newMessage, error: messageError } = await supabase
     .from('messages')
     .insert({

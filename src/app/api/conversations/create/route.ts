@@ -7,8 +7,11 @@ export async function POST(req: Request) {
     const result = await createConversation(body)
     return NextResponse.json(result)
   } catch (err: any) {
+    const code = err?.code || null
+    const message = err?.message || 'Something went wrong'
+
     return NextResponse.json(
-      { error: err.message || 'Something went wrong' },
+      { error: code || message }, 
       { status: 400 }
     )
   }

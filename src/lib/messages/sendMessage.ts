@@ -26,7 +26,7 @@ export async function sendMessage({ conversationId, content }: SendPayload) {
   // 2) Get the user's sending number from phone_numbers (most recent)
   const { data: phone, error: phoneErr } = await supabase
     .from('phone_numbers')
-    .select('number, created_at')
+    .select('number, status, created_at')
     .eq('user_id', user.id)
     .order('created_at', { ascending: false })
     .limit(1)
@@ -36,8 +36,16 @@ export async function sendMessage({ conversationId, content }: SendPayload) {
     console.error('phone_numbers select error:', phoneErr)
     throw new Error('Failed to fetch your sending number')
   }
+
   if (!phone?.number) {
     throw new Error('No sending number found. Please purchase a Toll-Free number first.')
+  }
+
+  // Block if not verified
+  if (phone.status !== 'verified') {
+    const err: any = new Error('Number not verified')
+    err.code = 'NUMBER_NOT_VERIFIED'
+    throw err
   }
 
   // 3) Send SMS from the user’s Toll-Free number
