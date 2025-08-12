@@ -5,6 +5,7 @@ import Sidebar from "@/components/layout/Sidebar";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { Analytics } from "@vercel/analytics/next"
+import AuthNavbar from "@/components/layout/AuthNavbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,6 +41,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} ${openSans.variable} antialiased bg-zinc-50`}>
         <Navbar />
+        <AuthNavbar />
         <Sidebar />
         {children}
         <Footer />

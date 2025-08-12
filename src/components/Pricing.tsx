@@ -36,8 +36,8 @@ export default function Pricing() {
               className="w-full border border-zinc-300 rounded-md p-2"
             >
               <option value="canada">Canada</option>
-              <option value="us" disabled>
-                United States (Coming Soon)
+              <option value="us">
+                United States
               </option>
             </select>
           </div>
@@ -65,7 +65,7 @@ export default function Pricing() {
         <div className="bg-zinc-50 p-8 flex flex-col justify-between">
           <div>
             <h4 className="text-lg font-semibold text-zinc-700 mb-2">Estimated cost:</h4>
-            <p className="text-4xl font-bold text-zinc-900 mb-6">${totalCost} CAD</p>
+            <p className="text-4xl font-bold text-zinc-900 mb-6">${totalCost}</p>
 
             <div className="space-y-2 text-sm text-zinc-600">
               <p>{volume.toLocaleString()} SMS @ 5¢ per SMS</p>
