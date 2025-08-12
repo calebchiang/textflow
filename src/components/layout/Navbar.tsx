@@ -67,7 +67,7 @@ export default function Navbar() {
             href="/login"
             className="hover:text-emerald-600 transition-colors"
           >
-            Login
+            <span className="font-bold">Login</span>
           </Link>
           <Link
             href="/signup"
