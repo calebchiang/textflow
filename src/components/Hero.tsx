@@ -1,11 +1,15 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { AuroraText } from '@/components/magicui/aurora-text'
+import BookDemoModal from '@/components/BookDemoModal'
 
 export default function Hero() {
+  const [showBookDemo, setShowBookDemo] = useState(false)
+
   return (
     <section className="relative bg-zinc-50 py-20 overflow-hidden">
       <div className="relative z-10 max-w-6xl mx-auto px-6 flex flex-col-reverse md:flex-row items-center justify-between gap-16">
@@ -26,12 +30,14 @@ export default function Hero() {
             >
               Get Started Free
             </Link>
-            <Link
-              href="/#book-demo"
+
+            <button
+              type="button"
+              onClick={() => setShowBookDemo(true)}
               className="border border-emerald-600 text-emerald-600 bg-white px-4 py-2 text-sm sm:text-base rounded-md hover:bg-emerald-50 transition"
             >
               Book Demo
-            </Link>
+            </button>
           </div>
         </div>
 
@@ -75,6 +81,12 @@ export default function Hero() {
           </motion.div>
         </div>
       </div>
+
+      {/* Book Demo Modal */}
+      <BookDemoModal
+        open={showBookDemo}
+        onClose={() => setShowBookDemo(false)}
+      />
     </section>
   )
 }
