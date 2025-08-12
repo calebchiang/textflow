@@ -44,9 +44,13 @@ export default function Navbar() {
           <a href="#features" className="hover:text-emerald-600 transition-colors">
             Features
           </a>
+          <a href="#testimonials" className="hover:text-emerald-600 transition-colors">
+            Testimonials
+          </a>
           <a href="#pricing" className="hover:text-emerald-600 transition-colors">
             Pricing
           </a>
+          
         </>
       )}
 
