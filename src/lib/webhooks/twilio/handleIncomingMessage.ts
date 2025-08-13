@@ -12,19 +12,36 @@ export async function handleIncomingMessage(formData: FormData) {
     throw new Error('Missing required fields from Twilio webhook')
   }
 
-  // Normalize the phone number by removing +1 (for US/Canada numbers)
-  if (from.startsWith('+1')) {
-    from = from.substring(2) // Removes +1
+  let phoneOwner = null as null | { user_id: string }
+  {
+    const { data } = await supabase
+      .from('phone_numbers')
+      .select('user_id')
+      .eq('number', to)
+      .maybeSingle()
+    
+    phoneOwner = data ?? null
+  }
+
+  if (!phoneOwner) {
+    console.warn(`No phone owner found for To: ${to}`)
+    return `<Response></Response>`
+  }
+
+  let fromNormalized = from
+  if (fromNormalized.startsWith('+1')) {
+    fromNormalized = fromNormalized.substring(2)
   }
 
   const { data: contact, error: contactError } = await supabase
     .from('contacts')
     .select('id, user_id')
-    .eq('phone_number', from)
-    .single()
+    .eq('user_id', phoneOwner.user_id)
+    .eq('phone_number', fromNormalized)
+    .maybeSingle()
 
   if (contactError || !contact) {
-    console.warn(`Contact not found for phone: ${from}`)
+    console.warn(`Contact not found for user ${phoneOwner.user_id} phone: ${fromNormalized}`)
     return `<Response></Response>`
   }
 
@@ -45,7 +62,7 @@ export async function handleIncomingMessage(formData: FormData) {
     .from('messages')
     .insert({
       conversation_id: conversation.id,
-      sender_id: contact.id, // Sender is the Contact (inbound)
+      sender_id: contact.id,
       content: body,
     })
 
