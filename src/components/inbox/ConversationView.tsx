@@ -64,11 +64,15 @@ export default function ConversationView({ conversation }: { conversation: any }
       const data = await res.json()
 
       if (!res.ok) {
-        // Backend currently returns { error: string }
-        // Check for the unverified case
-        if (typeof data?.error === 'string' && data.error.toLowerCase().includes('not verified')) {
+        // Inspect server error string
+        const errStr = typeof data?.error === 'string' ? data.error.toLowerCase() : ''
+
+        if (errStr.includes('not verified')) {
           setErrorMsg('You must verify your Toll-Free number before sending messages.')
+        } else if (errStr.includes('insufficient credits')) {
+          setErrorMsg('You do not have enough credits to send a message. Click “Credits” in the top right to add more.')
         } else {
+          setErrorMsg('Unable to send message. Please try again.')
           console.error('Failed to send message:', data?.error || 'Unknown error')
         }
         return
@@ -80,6 +84,7 @@ export default function ConversationView({ conversation }: { conversation: any }
       }
     } catch (err) {
       console.error('Error sending message:', err)
+      setErrorMsg('Unable to send message. Please try again.')
     } finally {
       setSending(false)
     }
@@ -233,17 +238,11 @@ export default function ConversationView({ conversation }: { conversation: any }
           )}
         </div>
 
-        {/* hazard banner if number isn't verified */}
+        {/* warning banner for verification / credits / generic errors */}
         {errorMsg && (
           <div className="mx-4 mb-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800 flex items-start gap-2">
             <AlertTriangle className="h-4 w-4 mt-0.5 text-amber-500" />
-            <span>
-              {errorMsg}{' '}
-              <a href="/numbers/verify" className="underline text-amber-800 hover:text-amber-900">
-                Verify here
-              </a>
-              .
-            </span>
+            <span>{errorMsg}</span>
           </div>
         )}
 
@@ -259,9 +258,10 @@ export default function ConversationView({ conversation }: { conversation: any }
             }}
           />
           <button
-            className="text-green-500 hover:text-green-600 p-2 rounded-full"
+            className="text-green-500 hover:text-green-600 p-2 rounded-full disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={handleSend}
             disabled={sending || !newMessage.trim()}
+            title={sending ? 'Sending…' : 'Send'}
           >
             <Send className="w-5 h-5" />
           </button>
