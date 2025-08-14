@@ -15,8 +15,9 @@ export default function AuthNavbar() {
   const pathname = usePathname()
   const router = useRouter()
 
-  const hideNavbarRoutes = ['/', '/login', '/signup']
-  const shouldHide = hideNavbarRoutes.includes(pathname)
+  // Hide on exact routes or any route starting with /help
+  const shouldHide =
+    ['/', '/login', '/signup'].includes(pathname) || pathname.startsWith('/help')
 
   const [profile, setProfile] = useState<ProfileRow | null>(null)
   const [loading, setLoading] = useState(true)

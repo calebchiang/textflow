@@ -25,8 +25,11 @@ export default function Sidebar() {
   const router = useRouter()
   const supabase = createClient()
 
-  const hideSidebarRoutes = ['/', '/login', '/signup']
-  if (hideSidebarRoutes.includes(pathname)) return null
+  // Hide on specific routes and any route under /help
+  const shouldHide =
+    ['/', '/login', '/signup'].includes(pathname) || pathname.startsWith('/help')
+
+  if (shouldHide) return null
 
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(`${href}/`)
