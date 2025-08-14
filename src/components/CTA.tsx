@@ -48,14 +48,29 @@ export default function CTA() {
           </div>
         </div>
 
-        <Link href="/signup">
-          <Button
-            size="lg"
-            className="mt-4 text-base font-semibold px-8 py-5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white transition cursor-pointer"
+        <div className="flex flex-col sm:flex-row gap-4 mt-4">
+          <Link href="/signup">
+            <Button
+              size="lg"
+              className="text-base font-semibold px-8 py-5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white transition cursor-pointer"
+            >
+              Get Started Free
+            </Button>
+          </Link>
+          <a
+            href="https://calendar.app.google/nGmtM2EWKkDJwzZC9"
+            target="_blank"
+            rel="noopener noreferrer"
           >
-            Get Started Free
-          </Button>
-        </Link>
+            <Button
+              size="lg"
+              variant="outline"
+              className="text-base font-semibold px-8 py-5 rounded-xl border-emerald-600 text-emerald-600 hover:bg-emerald-50 transition cursor-pointer"
+            >
+              Book Demo
+            </Button>
+          </a>
+        </div>
       </div>
     </section>
   )
