@@ -98,7 +98,7 @@ export default function TollFreeNumber() {
                 href="/signup?plan=tollfree"
                 className="inline-flex items-center justify-center rounded-md bg-emerald-600 px-4 py-2.5 text-white font-medium hover:bg-emerald-700 transition"
               >
-                Get a toll-free number
+                Claim 50% off today
               </Link>
               <Link
                 href="/#pricing"
