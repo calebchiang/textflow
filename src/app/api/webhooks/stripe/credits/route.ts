@@ -6,7 +6,6 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-07-30.basil',
 })
 
-// Fallback map if metadata is ever missing
 const PRICE_TO_VOLUME: Record<string, number> = {
   'price_1Rv8WuCAfJr8g33JE6br0s4P': 100,
   'price_1Rv8XYCAfJr8g33Jq2OgtfSV': 500,

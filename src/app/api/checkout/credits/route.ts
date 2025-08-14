@@ -7,15 +7,14 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 })
 
 const PRICE_IDS: Record<number, string> = {
-  100:   'price_1Rv8WuCAfJr8g33JE6br0s4P',
-  500:   'price_1Rv8XYCAfJr8g33Jq2OgtfSV',
-  1000:  'price_1Rv8Y9CAfJr8g33JPa8hnVHA',
-  2000:  'price_1Rv8YkCAfJr8g33J5xcKWEvx',
-  5000:  'price_1Rv8ZKCAfJr8g33J9N87YG7z',
-  10000: 'price_1Rv8ZwCAfJr8g33JPzNHM4nq',
+  100:   'price_1Rw8moCBOVEIoveVHCDdCMb4',
+  500:   'price_1Rw8mvCBOVEIoveVA4AieTiD',
+  1000:  'price_1Rw8nACBOVEIoveVvAMAwD0U',
+  2000:  'price_1Rw8nCCBOVEIoveVvuptswsv',
+  5000:  'price_1Rw8nGCBOVEIoveVuZneemrs',
+  10000: 'price_1Rw8nICBOVEIoveVyQUZkcic',
 }
 
-// Optional: allow plan aliases like "sms_500"
 const PLAN_TO_VOLUME: Record<string, number> = {
   sms_100: 100,
   sms_500: 500,
