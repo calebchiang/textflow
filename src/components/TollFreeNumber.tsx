@@ -12,7 +12,7 @@ import {
 
 export default function TollFreeNumber() {
   return (
-    <section className="relative bg-zinc-50 py-20 overflow-hidden">
+    <section id="toll" className="relative bg-zinc-50 py-20 overflow-hidden">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10 opacity-70 blur-3xl"

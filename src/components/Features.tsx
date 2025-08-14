@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import Image from 'next/image'
 import {
   Contact,
@@ -23,24 +24,25 @@ export default function Features() {
   const features = [
     {
       id: 1,
-      title: 'Build Your SMS List',
+      title: 'Get a Verified Toll-Free Number',
       description:
-        'Capture phone numbers through popups, QR codes, and signup forms. Turn casual visitors into subscribers and grow your audience on autopilot.',
+        'Start sending with a trusted, carrier-approved number. We guide you through toll-free verification so your messages deliver reliably and stay compliant.',
       bullets: [
         {
-          label: 'Multiple Opt-in Methods',
-          desc: 'Forms, QR codes, and more to match your marketing flow.',
-          icon: Contact,
+          label: 'Fast, 5-Minute Setup',
+          desc: 'Connect your number and kick off verification right inside TextFlow.',
+          icon: Clock,
         },
         {
-          label: 'Automatic Tagging',
-          desc: 'Segment subscribers at signup for better targeting.',
-          icon: Tags,
-        },
-        {
-          label: 'Compliance Built-In',
-          desc: 'Stay TCPA compliant with automatic consent collection.',
+          label: 'Build a Nationwide Brand',
+          desc: 'An 800 number signals professionalism and credibility to customers across the country.',
           icon: ShieldCheck,
+        },
+        {
+          label: 'Higher Deliverability & Trust',
+          desc: 'Verified senders see fewer blocks and better throughput for promos and alerts.',
+          icon: BarChart3,
+          learnMore: true, // custom flag so we can render the link
         },
       ],
       image: '/opt_in.png',
@@ -118,7 +120,7 @@ function FeatureBlock({ feature }: { feature: any }) {
 
   return (
     <div
-    id="features"
+      id="features"
       className={`flex flex-col-reverse md:flex-row ${
         feature.reversed ? 'md:flex-row-reverse' : ''
       } items-center gap-12`}
@@ -152,13 +154,26 @@ function FeatureBlock({ feature }: { feature: any }) {
                   duration: 0.5,
                   ease: 'easeOut',
                 }}
-                className="flex items-start gap-4"
+                className="flex flex-col gap-1"
               >
-                <Icon className="w-5 h-5 text-emerald-600 mt-1" />
-                <div>
-                  <p className="font-semibold text-zinc-800">{b.label}</p>
-                  <p className="text-zinc-500 text-sm">{b.desc}</p>
+                <div className="flex items-start gap-4">
+                  <Icon className="w-5 h-5 text-emerald-600 mt-1" />
+                  <div>
+                    <p className="font-semibold text-zinc-800">{b.label}</p>
+                    <p className="text-zinc-500 text-sm">{b.desc}</p>
+                  </div>
                 </div>
+                {b.learnMore && (
+                  <p className="text-sm text-zinc-500 mt-8">
+                    Learn more{' '}
+                    <Link
+                      href="#toll"
+                      className="underline text-zinc-500 hover:text-zinc-700"
+                    >
+                      here
+                    </Link>
+                  </p>
+                )}
               </motion.li>
             )
           })}
