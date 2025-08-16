@@ -21,16 +21,25 @@ export default function SignupPage() {
     setLoading(true)
     setError(null)
 
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-    })
+    const { error } = await supabase.auth.signUp({ email, password })
 
     setLoading(false)
 
     if (error) {
       setError(error.message)
     } else {
+      // fire conversion event before redirect
+      fetch('/api/meta/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          event_name: 'CompleteRegistration',
+          email,
+          event_source_url: window.location.href,
+        }),
+        keepalive: true, // ensures it still sends if user leaves page
+      })
+
       router.push('/login?verify=true')
     }
   }
