@@ -146,7 +146,7 @@ export default function GetPhoneNumberModal({ open, onClose }: GetPhoneNumberMod
             </div>
 
             <div className="mt-4 p-3 bg-zinc-100 rounded-md text-sm text-zinc-700">
-              <div className="text-xs text-zinc-500 mb-1">Price (🇨🇦)</div>
+              <div className="text-xs text-zinc-500 mb-1">Price</div>
               <div className="text-2xl font-bold text-zinc-800">$4.99/month</div>
             </div>
 
