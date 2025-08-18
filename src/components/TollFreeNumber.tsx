@@ -45,15 +45,9 @@ export default function TollFreeNumber() {
                   <div className="text-xl font-extrabold text-emerald-700">$4.99</div>
                   <div className="text-[11px] font-medium text-emerald-700">/month</div>
                 </div>
-                <div className="mt-1 text-[11px] text-emerald-700 text-center">Early-bird special</div>
+                <div className="mt-1 text-[11px] text-emerald-700 text-center font-bold">50% Off: Limited Time Special</div>
               </div>
             </div>
-
-            <p className="mt-4 text-zinc-600">
-              Get a trusted, carrier-approved toll-free number for better deliverability and brand
-              credibility. 
-            </p>
-
             <ul className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
               <li className="flex items-start gap-3">
                 <ShieldCheck className="h-5 w-5 text-emerald-600 mt-0.5" />
