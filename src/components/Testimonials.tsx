@@ -63,7 +63,7 @@ function InitialsAvatar({ name }: { name: string }) {
     .toUpperCase()
 
   return (
-    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100 font-semibold">
+    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-rose-50 text-rose-700 border border-rose-100 font-semibold">
       {initials}
     </div>
   )
@@ -73,7 +73,7 @@ function Stars() {
   return (
     <div className="flex gap-0.5" aria-label="5 out of 5 stars">
       {Array.from({ length: 5 }).map((_, i) => (
-        <Star key={i} className="h-4 w-4 fill-indigo-500 text-indigo-500" />
+        <Star key={i} className="h-4 w-4 fill-rose-500 text-rose-500" />
       ))}
     </div>
   )
@@ -84,8 +84,8 @@ export default function Testimonials() {
     <section className="relative bg-white py-20 px-6">
       <div id="testimonials" className="max-w-6xl mx-auto">
         <div className="mb-10 flex items-center gap-3">
-          <Quote className="h-5 w-5 text-indigo-600" />
-          <span className="text-sm font-semibold tracking-wide text-indigo-700 uppercase">
+          <Quote className="h-5 w-5 text-rose-600" />
+          <span className="text-sm font-semibold tracking-wide text-rose-700 uppercase">
             What customers say
           </span>
         </div>
@@ -106,7 +106,7 @@ export default function Testimonials() {
               className="group relative overflow-hidden rounded-2xl bg-white border border-zinc-200 shadow-sm p-6 hover:shadow-md transition-shadow"
             >
               <div className="flex items-start justify-between">
-                <Quote className="h-5 w-5 text-indigo-600" />
+                <Quote className="h-5 w-5 text-rose-600" />
                 <Stars />
               </div>
 
