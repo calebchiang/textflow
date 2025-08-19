@@ -22,7 +22,6 @@ export default function SignupPage() {
     setError(null)
 
     const { error } = await supabase.auth.signUp({ email, password })
-
     setLoading(false)
 
     if (error) {
@@ -37,9 +36,8 @@ export default function SignupPage() {
           email,
           event_source_url: window.location.href,
         }),
-        keepalive: true, // ensures it still sends if user leaves page
+        keepalive: true,
       })
-
       router.push('/login?verify=true')
     }
   }
@@ -51,25 +49,29 @@ export default function SignupPage() {
         redirectTo: `${window.location.origin}/auth/callback`,
       },
     })
-
     if (error) {
       setError(error.message)
     }
   }
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center px-4 py-12"
-      style={{
-        backgroundColor: '#27272a',
-        backgroundImage: 'url("/backgrounds/speech_bubble_background.png")',
-        backgroundRepeat: 'repeat',
-        backgroundSize: '200px',
-        backgroundPosition: 'center',
-      }}
-    >
+    <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-zinc-800">
       <div className="w-full max-w-xl min-h-[550px] bg-white backdrop-blur-md rounded-2xl shadow-2xl p-8">
-        <h1 className="text-3xl font-bold text-zinc-800 mb-4 mt-4 text-center">
+        
+        {/* Logo centered above header */}
+        <div className="flex justify-center mb-4">
+          <Link href="/">
+            <Image
+              src="/logo_4.png"
+              alt="TextFlow Logo"
+              width={60}
+              height={60}
+              className="rounded-md"
+            />
+          </Link>
+        </div>
+
+        <h1 className="text-3xl font-bold text-zinc-800 mb-4 mt-2 text-center">
           Grow your business with SMS
         </h1>
 
@@ -93,7 +95,9 @@ export default function SignupPage() {
           onClick={handleGoogleSignup}
         >
           <Image src="/logos/google.svg" alt="Google" width={20} height={20} />
-          <span className="text-sm font-medium text-zinc-800">Sign up with Google</span>
+          <span className="text-sm font-medium text-zinc-800">
+            Sign up with Google
+          </span>
         </button>
 
         <div className="relative mb-6">
@@ -101,7 +105,9 @@ export default function SignupPage() {
             <div className="w-full border-t border-zinc-200"></div>
           </div>
           <div className="relative text-center">
-            <span className="bg-white px-2 text-xs text-zinc-400">or sign up with email</span>
+            <span className="bg-white px-2 text-xs text-zinc-400">
+              or sign up with email
+            </span>
           </div>
         </div>
 
@@ -131,11 +137,16 @@ export default function SignupPage() {
           </button>
         </form>
 
-        {error && <p className="text-sm text-red-500 mt-4 text-center">{error}</p>}
+        {error && (
+          <p className="text-sm text-red-500 mt-4 text-center">{error}</p>
+        )}
 
         <p className="text-sm text-zinc-600 mt-4 text-center">
           Already have an account?{' '}
-          <Link href="/login" className="text-emerald-600 font-medium hover:underline">
+          <Link
+            href="/login"
+            className="text-emerald-600 font-medium hover:underline"
+          >
             Log in
           </Link>
         </p>

@@ -52,17 +52,14 @@ function LoginContent() {
   }
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center px-4 py-12"
-      style={{
-        backgroundColor: '#27272a',
-        backgroundImage: 'url("/backgrounds/speech_bubble_background.png")',
-        backgroundRepeat: 'repeat',
-        backgroundSize: '200px',
-        backgroundPosition: 'center',
-      }}
-    >
+    <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-zinc-800">
       <div className="w-full max-w-md bg-white backdrop-blur-md rounded-2xl shadow-2xl p-8">
+        <div className="flex justify-center mb-6">
+           <Link href="/">
+          <Image src="/logo_4.png" alt="TextFlow Logo" width={48} height={48} className="rounded-lg" />
+          </Link>
+        </div>
+
         <h1 className="text-2xl font-bold text-zinc-800 mb-6 text-center">
           Log in to TextFlow
         </h1>
