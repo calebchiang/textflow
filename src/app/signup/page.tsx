@@ -27,7 +27,6 @@ export default function SignupPage() {
     if (error) {
       setError(error.message)
     } else {
-      // fire conversion event before redirect
       fetch('/api/meta/track', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -58,7 +57,6 @@ export default function SignupPage() {
     <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-zinc-800">
       <div className="w-full max-w-xl min-h-[550px] bg-white backdrop-blur-md rounded-2xl shadow-2xl p-8">
         
-        {/* Logo centered above header */}
         <div className="flex justify-center mb-4">
           <Link href="/">
             <Image
