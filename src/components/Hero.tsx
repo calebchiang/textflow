@@ -9,11 +9,14 @@ import { AuroraText } from '@/components/magicui/aurora-text'
 export default function Hero() {
   return (
     <section className="relative bg-zinc-50 py-20 overflow-hidden">
-      <div className="relative z-10 max-w-6xl mx-auto px-6 flex flex-col-reverse md:flex-row items-center justify-between gap-16">
+      <div className="relative z-10 max-w-6xl mx-auto px-6 flex flex-col-reverse md:flex-row items-center justify-between gap-20">
         <div className="text-center md:text-left md:w-1/2">
-          <h1 className="text-5xl font-bold text-zinc-900 leading-tight">
-            Grow Your SMS List.<br className="hidden md:block" />
-            Drive <AuroraText className="inline-block">More Sales</AuroraText>.
+          <h1 className="text-6xl font-bold text-zinc-900 leading-tight">
+            <span className="md:whitespace-nowrap">Grow Your SMS List.</span>
+            <br className="hidden md:block" />
+            <span>
+              Drive <AuroraText className="inline-block">More Sales</AuroraText>.
+            </span>
           </h1>
 
           <p className="mt-4 text-lg text-zinc-600">
